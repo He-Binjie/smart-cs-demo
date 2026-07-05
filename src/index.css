@@ -141,8 +141,8 @@ html, body, #root {
 
 /* ===== Bubble ===== */
 .bubble {
-  padding: 9px 12px;
-  border-radius: 8px;
+  padding: 6px 12px;
+  border-radius: 16px;
   font-size: 13px;
   line-height: 1.5;
   color: #1f2329;
@@ -159,7 +159,7 @@ html, body, #root {
 .card {
   background: #fff;
   border: 1px solid #e5e6e8;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   max-width: 280px;
 }

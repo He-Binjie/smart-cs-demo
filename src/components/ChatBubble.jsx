@@ -99,7 +99,7 @@ function OrderCard({ onViewOrderList, onViewMainOrder }) {
       style={{
         background: '#fff',
         border: '1px solid #e5e6e8',
-        borderRadius: 8,
+        borderRadius: 16,
         maxWidth: 280,
         overflow: 'hidden',
       }}

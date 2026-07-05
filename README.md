@@ -1,16 +1,41 @@
-# React + Vite
+# 智能客服 Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+霸王茶姬供应链智能客服"茶小链"0.5 期交互演示系统。
 
-Currently, two official plugins are available:
+## 在线体验
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+👉 https://he-binjie.github.io/smart-cs-demo/
 
-## React Compiler
+## 功能范围（0.5 期）
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| 场景 | 说明 |
+|------|------|
+| 🚚 货到哪了 | 物流查询 + 司机联系方式（模拟拨号） |
+| 📦 查订单 | 订单状态查询 + H5 详情页 |
+| ❓ 问 FAQ | 常见问题知识库问答 |
+| 👤 转人工 | 精准路由 + 上下文传递 |
+| 🎫 转工单 | 一键跳转工单填写 |
+| 📝 投诉举报 | 直接 @群里 BP 处理 |
 
-## Expanding the Oxlint configuration
+## 技术栈
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- React 19 + Vite 6 + TailwindCSS v4
+- 纯前端 Mock 数据，无后端依赖
+- GitHub Pages 部署
+
+## 本地开发
+
+```bash
+npm install
+npm run dev
+# 访问 http://localhost:3021
+```
+
+## 部署
+
+推送 main 分支自动触发 GitHub Actions 构建部署。
+
+```bash
+git push origin main
+# 检查状态：gh run list --repo He-Binjie/smart-cs-demo
+```

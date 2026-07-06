@@ -173,8 +173,9 @@ function OrderCard({ onViewOrderList, onViewMainOrder, storeId }) {
   const stores = storeId
     ? mockStores.filter(s => s.storeId === storeId)
     : mockStores;
-  const allOrders = stores.flatMap(s => s.orders)
-    .sort((a, b) => new Date(a.createTime) - new Date(b.createTime)); // 由远到近
+  const allOrders = stores.flatMap(s => 
+    s.orders.map(o => ({ ...o, storeName: s.storeName }))
+  ).sort((a, b) => new Date(a.createTime) - new Date(b.createTime)); // 由远到近
   const storeName = stores.length === 1 ? stores[0].storeName : '全部门店';
 
   return (

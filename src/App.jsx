@@ -325,7 +325,7 @@ export default function App() {
               )}
               {view === 'privateChat' && (
                 <div className="page-slide-in h-full">
-                  <PrivateChat ref={privateChatRef} onBack={handleBackFromPrivateChat} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} />
+                  <PrivateChat ref={privateChatRef} onBack={handleBackFromPrivateChat} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenTopic={handleOpenTopic} />
                 </div>
               )}
               {view === 'orderList' && (

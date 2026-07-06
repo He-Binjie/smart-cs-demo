@@ -70,7 +70,7 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
       const text = userText;
 
       if (/人工|真人|客服/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'transfer', time: getTime() });
+        addMessage({ type: 'bot', user: BOT, cardType: 'transfer-group', time: getTime() });
         return;
       }
       if (/工单|提交工单/.test(text)) {
@@ -259,6 +259,29 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
           onMouseLeave={e => { e.currentTarget.style.background = '#f5f7fa'; }}
         >
           <span>📦</span> 查订单
+        </button>
+        <button
+          onClick={() => {
+            addMessage({ type: 'user', user: USER, text: '转人工', time: getTime() });
+            setTimeout(() => {
+              addMessage({ type: 'bot', user: BOT, cardType: 'transfer-group', time: getTime() });
+            }, 400);
+          }}
+          style={{
+            flex: 1, padding: '8px 0',
+            background: '#f5f7fa',
+            border: '1px solid #e5e6e8',
+            borderRadius: 8,
+            fontSize: 13, fontWeight: 500,
+            color: '#1f2329',
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#e8ecf3'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#f5f7fa'; }}
+        >
+          <span>👤</span> 转人工
         </button>
       </div>
 

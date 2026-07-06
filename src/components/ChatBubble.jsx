@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { logisticsData, humanAgents } from '../data/mockFAQ';
 import { mockStores, aggregateSubOrderStatus } from '../data/mockOrders';
 
@@ -72,6 +73,9 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
         {msg.cardType === 'logistics' && <LogisticsCard onCall={onCall} />}
         {msg.cardType === 'faq' && <FAQCard faq={msg.faqData} />}
         {msg.cardType === 'transfer' && <TransferCard />}
+        {msg.cardType === 'transfer-with-history' && <TransferWithHistoryCard />}
+        {msg.cardType === 'transfer-thread' && <TransferThreadCard />}
+        {msg.cardType === 'transfer-group' && <TransferGroupCard />}
         {msg.cardType === 'workorder' && <WorkOrderCard />}
         {msg.cardType === 'complaint' && <ComplaintCard description={msg.complaintDescription} />}
         {msg.cardType === 'complaint-transfer' && <ComplaintTransferCard />}
@@ -312,14 +316,138 @@ function FAQCard({ faq }) {
   );
 }
 
-// ===== 转人工卡片 =====
+// ===== 转人工卡片（旧版，保留兼容） =====
 function TransferCard() {
+  return <TransferWithHistoryCard />;
+}
+
+// ===== 转人工方式1：群内@BP + 前3轮对话 =====
+function TransferWithHistoryCard() {
+  const historyRounds = [
+    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单（XSD-20260705-04451）状态为"已发货"，预计今天下午2点到达。' },
+    { round: 2, user: '司机电话多少？', bot: '配送司机王师傅，电话 138****5678。如需联系可直接拨打。' },
+    { round: 3, user: '转人工', bot: '好的，正在为您转接人工客服...' },
+  ];
+
   return (
-    <div className="bubble">
-      <p>
-        正在为您转接人工客服...{'\n\n'}
-        <span className="at-mention">@华东承运商-李经理</span> 月亮湾店（张店长）需要您的协助，请及时响应。
+    <div className="bubble" style={{ maxWidth: 300 }}>
+      <p style={{ marginBottom: 8 }}>
+        <span className="at-mention">@李BP</span> 门店需要人工协助，以下是近期对话记录：
       </p>
+      <div style={{
+        background: '#f5f7fa', borderRadius: 8, padding: '10px 12px',
+        fontSize: 12, lineHeight: '18px', color: '#1f2329',
+      }}>
+        {historyRounds.map((r, i) => (
+          <div key={i} style={{ marginBottom: i < historyRounds.length - 1 ? 10 : 0 }}>
+            <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第{r.round}轮】</div>
+            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>{r.user}</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>{r.bot}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ===== 转人工方式2：创建话题 + 话题内@BP =====
+function TransferThreadCard() {
+  const [expanded, setExpanded] = useState(false);
+  const historyRounds = [
+    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单状态为"已发货"，预计今天下午2点到达。' },
+    { round: 2, user: '司机电话多少？', bot: '配送司机王师傅，电话 138****5678。' },
+    { round: 3, user: '转人工', bot: '好的，正在为您转接人工客服...' },
+  ];
+
+  return (
+    <div className="card" style={{ maxWidth: 300 }}>
+      <div className="card-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 16 }}>📌</span>
+        <h3 style={{ margin: 0, fontSize: 14 }}>已创建话题</h3>
+      </div>
+      <div className="card-body" style={{ padding: '10px 14px' }}>
+        <div style={{
+          background: '#f0f5ff', borderRadius: 6, padding: '8px 10px',
+          marginBottom: 8, fontSize: 13, color: '#3370ff', fontWeight: 500,
+        }}>
+          话题：【转人工】
+        </div>
+        <div style={{ fontSize: 12, color: '#646a73', marginBottom: 8 }}>
+          已 <span className="at-mention" style={{ fontSize: 12 }}>@李BP</span> 并带入近期对话记录，请在话题中继续沟通。
+        </div>
+        <div style={{ fontSize: 11, color: '#8f959e', marginBottom: 4 }}>
+          参与人：张店长、李BP、茶小链
+        </div>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          style={{
+            background: 'none', border: 'none', color: '#3370ff',
+            fontSize: 12, cursor: 'pointer', padding: 0, marginTop: 4,
+          }}
+        >
+          {expanded ? '收起对话记录 ▲' : '查看对话记录 ▼'}
+        </button>
+        {expanded && (
+          <div style={{
+            background: '#f5f7fa', borderRadius: 6, padding: '8px 10px',
+            marginTop: 8, fontSize: 12, lineHeight: '18px',
+          }}>
+            {historyRounds.map((r, i) => (
+              <div key={i} style={{ marginBottom: i < historyRounds.length - 1 ? 8 : 0 }}>
+                <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第{r.round}轮】</div>
+                <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>{r.user}</div>
+                <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>{r.bot}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== 转人工方式3：私聊拉群 =====
+function TransferGroupCard() {
+  return (
+    <div className="card" style={{ maxWidth: 300 }}>
+      <div className="card-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 16 }}>👥</span>
+        <h3 style={{ margin: 0, fontSize: 14 }}>已创建专属服务群</h3>
+      </div>
+      <div className="card-body" style={{ padding: '10px 14px' }}>
+        <div style={{
+          background: '#f0f5ff', borderRadius: 6, padding: '8px 10px',
+          marginBottom: 8, fontSize: 13, color: '#3370ff', fontWeight: 500,
+        }}>
+          群名：张店长-李BP-茶小链
+        </div>
+        <div style={{ fontSize: 12, color: '#646a73', marginBottom: 6 }}>
+          群成员：张店长、李BP、茶小链
+        </div>
+        <div style={{ fontSize: 12, color: '#646a73', marginBottom: 8 }}>
+          已将近期对话记录发送至群内，<span className="at-mention" style={{ fontSize: 12 }}>@李BP</span> 将尽快回复您。
+        </div>
+        <div style={{
+          background: '#f5f7fa', borderRadius: 6, padding: '8px 10px',
+          fontSize: 12, lineHeight: '18px',
+        }}>
+          <div style={{ marginBottom: 6 }}>
+            <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第1轮】</div>
+            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>今天月亮湾店鲜奶到了吗？</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>已为您查询，鲜奶订单状态为"已发货"，预计今天下午2点到达。</div>
+          </div>
+          <div style={{ marginBottom: 6 }}>
+            <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第2轮】</div>
+            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>司机电话多少？</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>配送司机王师傅，电话 138****5678。</div>
+          </div>
+          <div>
+            <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第3轮】</div>
+            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>转人工</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>好的，正在为您转接人工客服...</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

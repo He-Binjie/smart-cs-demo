@@ -40,7 +40,8 @@ export const DEMO_SCENARIOS = [
   { label: '📦 查订单(多店)', text: '查一下我的订单', scenario: 'multi' },
   { label: '📦 查订单(单店)', text: '查一下我的订单', scenario: 'single' },
   { label: '❓ 问FAQ', text: '下午四点以后下单今天能到吗' },
-  { label: '👤 转人工', text: '转人工' },
+  { label: '👤 转人工方式1', text: '转人工', scenario: 'transfer1' },
+  { label: '👤 转人工方式2', text: '转人工', scenario: 'transfer2' },
   { label: '🎫 转工单', text: '帮我提交工单' },
   { label: '📝 投诉举报', text: '我要投诉 今天到货少了两箱鲜奶 举报供应商' },
 ];
@@ -99,8 +100,16 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
       const text = userText;
 
       // 1. 转人工
+      if (scenarioType === 'transfer1' || scenarioType === 'transfer2') {
+        if (scenarioType === 'transfer1') {
+          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
+        } else {
+          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-thread', time: getTime() });
+        }
+        return;
+      }
       if (/人工|真人|客服/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'transfer', time: getTime() });
+        addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
         return;
       }
 

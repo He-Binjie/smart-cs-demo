@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ChatInterface from './components/ChatInterface';
+import ChatInterface, { DEMO_SCENARIOS } from './components/ChatInterface';
 import OrderList from './components/OrderList';
 
 // ===== Phone Call Simulation Overlay =====
@@ -244,6 +244,7 @@ export default function App() {
   const [containerScale, setContainerScale] = useState(1);
   const [phoneCall, setPhoneCall] = useState(null); // { name, phone }
   const containerRef = useRef(null);
+  const chatRef = useRef(null);
 
   useEffect(() => {
     function calcScale() {
@@ -313,7 +314,7 @@ export default function App() {
             {/* Main Content */}
             <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {view === 'chat' && (
-                <ChatInterface onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} />
+                <ChatInterface ref={chatRef} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} />
               )}
               {view === 'orderList' && (
                 <div className="page-slide-in h-full">
@@ -336,7 +337,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Right annotation */}
+        {/* Right annotation + scenario buttons */}
         <div style={{
           width: 180,
           padding: '20px 16px',
@@ -350,13 +351,41 @@ export default function App() {
           </div>
           <div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.8 }}>
             <div style={{ marginBottom: 10 }}>
-              输入框上方的快捷按钮（🚚货到哪了、📦查订单 等）<span style={{ color: '#fbbf24', fontWeight: 500 }}>仅用于演示</span>，实际产品中不存在这些按钮。
+              右侧场景按钮<span style={{ color: '#fbbf24', fontWeight: 500 }}>仅用于演示</span>，实际产品中不存在。
             </div>
             <div style={{ marginBottom: 10 }}>
-              实际交互方式：用户在飞书群中 <span style={{ color: '#60a5fa' }}>@茶小链</span> + 输入问题文字。
+              实际交互：飞书群中 <span style={{ color: '#60a5fa' }}>@茶小链</span> + 输入问题文字。
             </div>
-            <div style={{ color: '#64748b', fontSize: 11, marginTop: 12, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 10 }}>
-              点击场景按钮 = 模拟用户 @茶小链 发送对应文字
+          </div>
+
+          {/* Scenario buttons */}
+          <div style={{ marginTop: 16, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', marginBottom: 8 }}>
+              🎬 场景演示
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {DEMO_SCENARIOS.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => chatRef.current?.handleScenario(s)}
+                  style={{
+                    padding: '6px 10px',
+                    background: 'rgba(51,112,255,0.15)',
+                    border: '1px solid rgba(51,112,255,0.3)',
+                    borderRadius: 6,
+                    color: '#93c5fd',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(51,112,255,0.3)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(51,112,255,0.15)'; }}
+                >
+                  {s.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>

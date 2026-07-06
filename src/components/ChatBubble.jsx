@@ -191,7 +191,6 @@ function OrderCard({ onViewOrderList, onViewMainOrder, storeId }) {
 
       {/* Order List - each row clickable */}
       {allOrders.map((order, idx) => {
-        const subStats = aggregateSubOrderStatus(order);
         const statusColor = STATUS_COLORS[order.status] || '#8f959e';
         const isLast = idx === allOrders.length - 1;
 
@@ -237,29 +236,6 @@ function OrderCard({ onViewOrderList, onViewMainOrder, storeId }) {
               >
                 {order.status}
               </div>
-            </div>
-
-            {/* Sub-order status pills */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
-              {subStats.map(({ status, count }) => {
-                const subColor = STATUS_COLORS[status] || '#8f959e';
-                return (
-                  <span
-                    key={status}
-                    style={{
-                      display: 'inline-block',
-                      padding: '1px 6px',
-                      borderRadius: 8,
-                      fontSize: 10,
-                      color: subColor,
-                      background: `${subColor}10`,
-                      border: `1px solid ${subColor}20`,
-                    }}
-                  >
-                    {status}×{count}
-                  </span>
-                );
-              })}
             </div>
           </div>
         );

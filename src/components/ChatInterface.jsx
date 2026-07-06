@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ChatBubble from './ChatBubble';
 import { matchFAQ, logisticsData, humanAgents, faqData } from '../data/mockFAQ';
 import { mockStores } from '../data/mockOrders';
@@ -35,7 +35,7 @@ const USER = { name: '张店长（月亮湾店）', avatar: '张', color: '#8B5C
 const OTHER = { name: '李BP', avatar: '李', color: '#10B981' };
 
 // ===== Demo scenarios (7 items) =====
-const DEMO_SCENARIOS = [
+export const DEMO_SCENARIOS = [
   { label: '🚚 货到哪了', text: '今天的货什么时候到 司机电话多少' },
   { label: '📦 查订单(多店)', text: '查一下我的订单', scenario: 'multi' },
   { label: '📦 查订单(单店)', text: '查一下我的订单', scenario: 'single' },
@@ -48,12 +48,18 @@ const DEMO_SCENARIOS = [
 // ===== Welcome message text =====
 const WELCOME_TEXT = '大家好，我是茶小链，已加入本群。我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n有任何问题随时 @我 即可。';
 
-export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall }) {
+export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall }, ref) {
   const [messages, setMessages] = useState([
     { id: 1, type: 'system', text: '「茶小链」已加入群聊' },
     { id: 2, type: 'bot', user: BOT, cardType: 'welcome', text: WELCOME_TEXT, time: '09:10' },
-    { id: 3, type: 'other', user: OTHER, text: '今天月亮湾店鲜奶到了吗？', time: '09:12' },
-    { id: 4, type: 'user', user: USER, text: '到了，刚签收', time: '09:15' },
+    { id: 3, type: 'other', user: { name: '王承运商', avatar: '王', color: '#F59E0B' }, text: '今天月亮湾店的货已经装车了，预计下午2点到', time: '09:12' },
+    { id: 4, type: 'user', user: USER, text: '好的，收到', time: '09:15' },
+    { id: 5, type: 'other', user: OTHER, text: '@王承运商 德力新天地店那边也是今天下午送吗？', time: '09:18' },
+    { id: 6, type: 'other', user: { name: '王承运商', avatar: '王', color: '#F59E0B' }, text: '是的，一起送，大概3点左右到', time: '09:20' },
+    { id: 7, type: 'other', user: { name: '周店长', avatar: '周', color: '#EC4899' }, text: '我这边永旺梦乐城店的鲜奶好像少了一箱，能帮忙确认下吗？', time: '09:25' },
+    { id: 8, type: 'other', user: OTHER, text: '@周店长 我让仓库查一下，稍等', time: '09:28' },
+    { id: 9, type: 'user', user: USER, text: '今天月亮湾店鲜奶到了吗？', time: '09:30' },
+    { id: 10, type: 'other', user: { name: '王承运商', avatar: '王', color: '#F59E0B' }, text: '到了，刚签收', time: '09:32' },
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -179,6 +185,10 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
     simulateBotReply(scenario.text, scenario.scenario);
   };
 
+  useImperativeHandle(ref, () => ({
+    handleScenario,
+  }));
+
   const getTime = () => {
     const now = new Date();
     return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -265,19 +275,6 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
         )}
       </div>
 
-      {/* 快捷场景按钮 */}
-      <div className="scenario-bar">
-        {DEMO_SCENARIOS.map((s, i) => (
-          <button
-            key={i}
-            onClick={() => handleScenario(s)}
-            className="scenario-btn"
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
-
       {/* 底部输入区 - 对齐HTML原型 */}
       <div className="input-area">
         <input
@@ -291,4 +288,4 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
       </div>
     </div>
   );
-}
+});

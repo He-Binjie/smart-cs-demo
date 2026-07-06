@@ -138,55 +138,41 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
         </div>
       </div>
 
-      {/* Store Selector (single-select) */}
+      {/* Store Selector (dropdown) */}
       {allStores.length > 1 && (
         <div style={{
           flexShrink: 0,
-          padding: '10px 12px',
+          padding: '8px 16px',
           background: '#fff',
           borderBottom: '1px solid #e5e6e8',
           display: 'flex',
+          alignItems: 'center',
           gap: '8px',
-          overflowX: 'auto',
         }}>
-          {allStores.map(store => (
-            <button
-              key={store.storeId}
-              onClick={() => setSelectedStoreId(store.storeId)}
-              style={{
-                flexShrink: 0,
-                padding: '6px 14px',
-                borderRadius: '18px',
-                fontSize: '13px',
-                fontWeight: 500,
-                whiteSpace: 'nowrap',
-                border: selectedStoreId === store.storeId ? '1px solid #3370ff' : '1px solid #e5e6e8',
-                background: selectedStoreId === store.storeId ? '#e8f3ff' : '#f5f6f7',
-                color: selectedStoreId === store.storeId ? '#3370ff' : '#646a73',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-            >
-              {store.storeName}
-            </button>
-          ))}
+          <span style={{ fontSize: '13px', color: '#646a73', flexShrink: 0 }}>门店：</span>
+          <select
+            value={selectedStoreId || ''}
+            onChange={e => setSelectedStoreId(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '6px 10px',
+              borderRadius: '6px',
+              border: '1px solid #e5e6e8',
+              fontSize: '13px',
+              color: '#1f2329',
+              background: '#f5f6f7',
+              outline: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {allStores.map(store => (
+              <option key={store.storeId} value={store.storeId}>
+                {store.storeName}
+              </option>
+            ))}
+          </select>
         </div>
       )}
-
-      {/* Sub-order count */}
-      <div style={{
-        flexShrink: 0,
-        padding: '8px 16px',
-        background: '#fff',
-        borderBottom: '1px solid #e5e6e8',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-      }}>
-        <span style={{ fontSize: '12px', color: '#8f959e' }}>
-          共 {totalSubOrders} 个子订单
-        </span>
-      </div>
 
       {/* Filter Tabs */}
       <div style={{
@@ -223,39 +209,6 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
 
       {/* Scrollable Content */}
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '16px' }}>
-        {/* Driver Info (shown when shipped orders exist) */}
-        {hasShipped && (
-          <div style={{
-            margin: '8px 12px',
-            padding: '12px',
-            background: '#fff',
-            borderRadius: '8px',
-            border: '1px solid #e5e6e8',
-          }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: '#1f2329', marginBottom: '8px' }}>
-              今日配送司机
-            </div>
-            {todayDrivers.map((driver, i) => (
-              <div key={i} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '4px 0',
-                fontSize: '13px',
-                color: '#3370ff',
-              }}>
-                <span>{driver.type} {driver.name}：</span>
-                <span
-                  onClick={() => onCall && onCall(driver.name, driver.phone)}
-                  style={{ color: '#3370ff', cursor: 'pointer', fontWeight: 500 }}
-                >
-                  {driver.phone} 📞
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* Sub-order Blocks - grouped by main order */}
         {groupedOrders.map(group => {
           // Filter sub-orders within this group
@@ -265,8 +218,6 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
 
           if (filteredSubs.length === 0) return null;
 
-          const mainStatusColor = STATUS_COLORS[group.mainOrderStatus] || STATUS_COLORS['处理中'];
-
           return (
             <div key={group.mainOrderId} style={{
               margin: '8px 12px',
@@ -275,40 +226,15 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
               border: '1px solid #e5e6e8',
               overflow: 'hidden',
             }}>
-              {/* Main Order Header */}
+              {/* Main Order Header - only order number */}
               <div style={{
                 padding: '10px 12px',
                 borderBottom: '1px solid #f0f1f3',
                 background: '#fafbfc',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#1f2329' }}>
-                    {group.mainOrderId}
-                  </span>
-                  <span style={{
-                    fontSize: '11px',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                    background: mainStatusColor.bg,
-                    color: mainStatusColor.text,
-                    fontWeight: 500,
-                  }}>
-                    {group.mainOrderStatus}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '11px', color: '#8f959e' }}>
-                    子订单 {group.subOrderCount}个
-                  </span>
-                  <span style={{ fontSize: '11px', color: '#8f959e' }}>|</span>
-                  <span style={{ fontSize: '11px', color: '#8f959e' }}>
-                    {group.createTime}
-                  </span>
-                  <span style={{ fontSize: '11px', color: '#8f959e' }}>|</span>
-                  <span style={{ fontSize: '11px', color: '#8f959e' }}>
-                    {group.storeName}
-                  </span>
-                </div>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#1f2329' }}>
+                  {group.mainOrderId}
+                </span>
               </div>
 
               {/* Sub-orders under this main order */}
@@ -318,6 +244,7 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
                   sub={sub}
                   expanded={!!expandedProducts[sub._key]}
                   onToggle={() => toggleExpand(sub._key)}
+                  onCall={onCall}
                 />
               ))}
             </div>
@@ -456,7 +383,7 @@ function SubOrderBlock({ sub, expanded, onToggle }) {
 }
 
 // ===== Sub-order row (no main order header, used inside grouped view) =====
-function SubOrderRow({ sub, expanded, onToggle }) {
+function SubOrderRow({ sub, expanded, onToggle, onCall }) {
   const products = sub.products || [];
   const productLines = products.map(p => `${p.name}×${p.qty}×${p.unit}`);
   const hasMore = productLines.length > 5;
@@ -464,13 +391,43 @@ function SubOrderRow({ sub, expanded, onToggle }) {
 
   const statusColor = STATUS_COLORS[sub.status] || STATUS_COLORS['备货中'];
 
+  // Mock driver and date info based on status
+  const isShipped = sub.status === '已发货' || sub.status === '部分签收';
+  const driver = isShipped ? todayDrivers[0] : null;
+  const shipDate = isShipped ? '2026-07-06 08:30' : null;
+  const estimatedArrival = isShipped ? '2026-07-06 14:00' : null;
+
   return (
     <div style={{
       padding: '10px 12px',
       borderTop: '1px solid #f5f6f7',
     }}>
+      {/* Driver info (above sub-order number, only for shipped orders) */}
+      {driver && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '6px 8px',
+          marginBottom: '8px',
+          background: '#f0f9ff',
+          borderRadius: '6px',
+          border: '1px solid #bae0ff',
+          fontSize: '12px',
+        }}>
+          <span style={{ color: '#646a73' }}>🚚 配送司机：</span>
+          <span style={{ color: '#1f2329', fontWeight: 500 }}>{driver.name}</span>
+          <span
+            onClick={() => onCall && onCall(driver.name, driver.phone)}
+            style={{ color: '#3370ff', cursor: 'pointer', fontWeight: 500, marginLeft: 'auto' }}
+          >
+            {driver.phone} 📞
+          </span>
+        </div>
+      )}
+
       {/* Sub-order number + status */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
         <span style={{ fontSize: '12px', color: '#646a73' }}>
           子单号：{sub.subOrderId}
         </span>
@@ -485,6 +442,14 @@ function SubOrderRow({ sub, expanded, onToggle }) {
           {sub.status}
         </span>
       </div>
+
+      {/* Shipping date + estimated arrival (below sub-order number) */}
+      {shipDate && (
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '8px', fontSize: '11px', color: '#8f959e' }}>
+          <span>发货：{shipDate}</span>
+          <span>预计到达：{estimatedArrival}</span>
+        </div>
+      )}
 
       {/* Products */}
       <div style={{ fontSize: '12px', color: '#1f2329', lineHeight: 1.8 }}>

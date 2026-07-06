@@ -48,7 +48,9 @@ export const DEMO_SCENARIOS = [
 // ===== Welcome message text =====
 const WELCOME_TEXT = '大家好，我是茶小链，已加入本群。我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n有任何问题随时 @我 即可。';
 
-export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall }, ref) {
+export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall, onOpenPrivateChat }, ref) {
+  const [showProfileCard, setShowProfileCard] = useState(false);
+  const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, type: 'system', text: '「茶小链」已加入群聊' },
     { id: 2, type: 'bot', user: BOT, cardType: 'welcome', text: WELCOME_TEXT, time: '09:10' },
@@ -194,6 +196,31 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
     return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
   };
 
+  // ===== Entry 1: Bot avatar click → profile card =====
+  const handleBotAvatarClick = () => {
+    setShowProfileCard(true);
+  };
+
+  const handleProfileSendMessage = () => {
+    setShowProfileCard(false);
+    onOpenPrivateChat && onOpenPrivateChat();
+  };
+
+  // ===== Entry 2: Tab click =====
+  const handleTabClick = (tab) => {
+    if (tab === '茶小链') {
+      onOpenPrivateChat && onOpenPrivateChat();
+    }
+  };
+
+  // ===== Entry 3: Plus menu =====
+  const handlePlusMenuClick = (item) => {
+    setShowPlusMenu(false);
+    if (item === 'privateChat') {
+      onOpenPrivateChat && onOpenPrivateChat();
+    }
+  };
+
   const renderMessage = (msg) => {
     if (msg.type === 'system') {
       return (
@@ -206,7 +233,10 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
     if (msg.type === 'bot' && msg.cardType === 'welcome') {
       return (
         <div key={msg.id} className="message-row bot animate-slideUp">
-          <div className="avatar bot"><BotAvatar /></div>
+          {/* Entry 1: clickable avatar */}
+          <div className="avatar bot" onClick={handleBotAvatarClick} style={{ cursor: 'pointer' }} title="点击查看茶小链资料">
+            <BotAvatar />
+          </div>
           <div className="message-content">
             <span className="message-name">{msg.user.name}</span>
             <div className="bubble">
@@ -227,6 +257,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
           onViewMainOrder={onViewMainOrder}
           onCall={onCall}
           onSelectStore={handleSelectStore}
+          onBotAvatarClick={handleBotAvatarClick}
         />
       );
     }
@@ -243,9 +274,11 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
     );
   };
 
+  const GROUP_TABS = ['消息', '云文档', '文件', '日历', '茶小链'];
+
   return (
-    <div className="h-full flex flex-col" style={{ background: '#f5f6f7' }}>
-      {/* 顶部导航栏 - 对齐HTML原型 */}
+    <div className="h-full flex flex-col" style={{ background: '#f5f6f7', position: 'relative' }}>
+      {/* 顶部导航栏 */}
       <div className="chat-header">
         <div className="header-avatar">
           <BotAvatar />
@@ -254,6 +287,43 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
           <h1>霸王茶姬-供应链服务群</h1>
           <p>5人 · 供应链BP、承运商、门店店长</p>
         </div>
+      </div>
+
+      {/* Entry 2: 群标签页 */}
+      <div style={{
+        display: 'flex',
+        gap: 0,
+        background: '#fff',
+        borderBottom: '1px solid #e5e6e8',
+        padding: '0 8px',
+        flexShrink: 0,
+        overflowX: 'auto',
+      }}>
+        {GROUP_TABS.map(tab => {
+          const isBot = tab === '茶小链';
+          return (
+            <div
+              key={tab}
+              onClick={() => handleTabClick(tab)}
+              style={{
+                padding: '7px 12px',
+                fontSize: 12,
+                fontWeight: isBot ? 600 : 400,
+                color: isBot ? '#3370ff' : '#646a73',
+                cursor: isBot ? 'pointer' : 'default',
+                borderBottom: isBot ? '2px solid #3370ff' : '2px solid transparent',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 3,
+              }}
+            >
+              {isBot && <span style={{ fontSize: 11 }}>🤖</span>}
+              {tab}
+            </div>
+          );
+        })}
       </div>
 
       {/* 聊天消息区 */}
@@ -275,17 +345,183 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         )}
       </div>
 
-      {/* 底部输入区 - 对齐HTML原型 */}
-      <div className="input-area">
+      {/* 底部输入区 + Entry 3 */}
+      <div className="input-area" style={{ position: 'relative' }}>
+        {/* Entry 3: Plus menu button */}
+        <div
+          onClick={() => setShowPlusMenu(!showPlusMenu)}
+          style={{
+            width: 32, height: 32, borderRadius: '50%',
+            background: showPlusMenu ? '#3370ff' : '#f0f1f3',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', flexShrink: 0,
+            transition: 'all 0.2s',
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke={showPlusMenu ? '#fff' : '#646a73'} strokeWidth="2.5" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </div>
+
+        {/* Plus menu popup */}
+        {showPlusMenu && (
+          <>
+            <div onClick={() => setShowPlusMenu(false)}
+              style={{ position: 'fixed', inset: 0, zIndex: 50 }} />
+            <div style={{
+              position: 'absolute', bottom: 48, left: 0,
+              background: '#fff', borderRadius: 12,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+              border: '1px solid #e5e6e8',
+              overflow: 'hidden', zIndex: 51,
+              minWidth: 160,
+              animation: 'slideUp 0.2s ease',
+            }}>
+              <div
+                onClick={() => handlePlusMenuClick('privateChat')}
+                style={{
+                  padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10,
+                  cursor: 'pointer', transition: 'background 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                <span style={{ fontSize: 18 }}>🤖</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1f2329' }}>联系茶小链</div>
+                  <div style={{ fontSize: 11, color: '#8f959e' }}>进入私聊对话</div>
+                </div>
+              </div>
+              <div style={{ borderTop: '1px solid #f0f1f3' }} />
+              <div
+                style={{
+                  padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10,
+                  cursor: 'pointer', opacity: 0.5,
+                }}
+              >
+                <span style={{ fontSize: 18 }}>📎</span>
+                <div style={{ fontSize: 13, color: '#1f2329' }}>发送文件</div>
+              </div>
+              <div
+                style={{
+                  padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10,
+                  cursor: 'pointer', opacity: 0.5,
+                }}
+              >
+                <span style={{ fontSize: 18 }}>📷</span>
+                <div style={{ fontSize: 13, color: '#1f2329' }}>拍摄</div>
+              </div>
+            </div>
+          </>
+        )}
+
         <input
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSend()}
           placeholder="@茶小链 输入您的问题..."
+          style={{ flex: 1 }}
         />
         <button onClick={handleSend} disabled={!input.trim()}>发送</button>
       </div>
+
+      {/* Entry 1: Profile Card Overlay */}
+      {showProfileCard && (
+        <>
+          <div onClick={() => setShowProfileCard(false)}
+            style={{
+              position: 'absolute', inset: 0, zIndex: 80,
+              background: 'rgba(0,0,0,0.35)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                background: '#fff', borderRadius: 16,
+                width: 280, overflow: 'hidden',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                animation: 'fadeIn 0.2s ease',
+              }}
+            >
+              {/* Profile header */}
+              <div style={{
+                background: 'linear-gradient(135deg, #8B1A1A, #C41E3A)',
+                padding: '24px 20px 20px',
+                textAlign: 'center',
+              }}>
+                <div style={{
+                  width: 64, height: 64, borderRadius: '50%',
+                  background: '#fff', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  margin: '0 auto 12px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                }}>
+                  <BotAvatar size={48} />
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>茶小链</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>
+                  供应链智能客服机器人
+                </div>
+              </div>
+
+              {/* Profile info */}
+              <div style={{ padding: '16px 20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 14, color: '#8f959e', width: 60 }}>所属</span>
+                    <span style={{ fontSize: 13, color: '#1f2329', fontWeight: 500 }}>霸王茶姬供应链</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 14, color: '#8f959e', width: 60 }}>能力</span>
+                    <span style={{ fontSize: 13, color: '#1f2329' }}>物流查询 · 订单查询 · FAQ · 转人工</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 14, color: '#8f959e', width: 60 }}>状态</span>
+                    <span style={{
+                      fontSize: 12, color: '#34c759', fontWeight: 500,
+                      display: 'flex', alignItems: 'center', gap: 4,
+                    }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34c759', display: 'inline-block' }} />
+                      在线
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div style={{ padding: '0 20px 20px', display: 'flex', gap: 10 }}>
+                <button
+                  onClick={() => setShowProfileCard(false)}
+                  style={{
+                    flex: 1, padding: '10px 0',
+                    background: '#f5f6f7', border: '1px solid #e5e6e8',
+                    borderRadius: 8, fontSize: 13, color: '#646a73',
+                    cursor: 'pointer', fontWeight: 500,
+                  }}
+                >
+                  关闭
+                </button>
+                <button
+                  onClick={handleProfileSendMessage}
+                  style={{
+                    flex: 1, padding: '10px 0',
+                    background: '#3370ff', border: 'none',
+                    borderRadius: 8, fontSize: 13, color: '#fff',
+                    cursor: 'pointer', fontWeight: 600,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+                  }}
+                >
+                  💬 发送消息
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 });

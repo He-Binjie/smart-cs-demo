@@ -26,7 +26,7 @@ function BotAvatar() {
   );
 }
 
-export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCall, onSelectStore }) {
+export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCall, onSelectStore, onBotAvatarClick }) {
   const isUser = msg.type === 'user';
   const isBot = msg.type === 'bot';
   const isOther = msg.type === 'other';
@@ -37,7 +37,7 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
     <div className={`${rowClass} animate-slideUp`}>
       {/* 头像 */}
       {isBot ? (
-        <div className="avatar bot"><BotAvatar /></div>
+        <div className="avatar bot" onClick={onBotAvatarClick} style={onBotAvatarClick ? { cursor: 'pointer' } : undefined}><BotAvatar /></div>
       ) : (
         <div
           className={`avatar ${isUser ? 'user' : 'other'}`}

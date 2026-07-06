@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import ChatInterface, { DEMO_SCENARIOS } from './components/ChatInterface';
+import PrivateChat from './components/PrivateChat';
 import OrderList from './components/OrderList';
 
 // ===== Phone Call Simulation Overlay =====
@@ -245,6 +246,7 @@ export default function App() {
   const [phoneCall, setPhoneCall] = useState(null); // { name, phone }
   const containerRef = useRef(null);
   const chatRef = useRef(null);
+  const privateChatRef = useRef(null);
 
   useEffect(() => {
     function calcScale() {
@@ -267,6 +269,8 @@ export default function App() {
   const handleBack = () => setView('chat');
   const handleCall = (name, phone) => setPhoneCall({ name, phone });
   const handleCloseCall = () => setPhoneCall(null);
+  const handleOpenPrivateChat = () => setView('privateChat');
+  const handleBackFromPrivateChat = () => setView('chat');
 
   return (
     <div className="h-full w-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
@@ -314,7 +318,12 @@ export default function App() {
             {/* Main Content */}
             <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {view === 'chat' && (
-                <ChatInterface ref={chatRef} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} />
+                <ChatInterface ref={chatRef} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenPrivateChat={handleOpenPrivateChat} />
+              )}
+              {view === 'privateChat' && (
+                <div className="page-slide-in h-full">
+                  <PrivateChat ref={privateChatRef} onBack={handleBackFromPrivateChat} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} />
+                </div>
               )}
               {view === 'orderList' && (
                 <div className="page-slide-in h-full">

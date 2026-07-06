@@ -141,10 +141,10 @@ html, body, #root {
 
 /* ===== Bubble ===== */
 .bubble {
-  padding: 6px 12px;
+  padding: 3px 10px;
   border-radius: 16px;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.4;
   color: #1f2329;
   word-break: break-word;
 }

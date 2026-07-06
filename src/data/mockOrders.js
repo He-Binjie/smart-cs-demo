@@ -1,5 +1,6 @@
-// 真实数据：上海金茂大厦店 近7天未完成订单
-// 数据来源：单店多子订单详情.xlsx + 单店多子订单商品详情.xlsx
+// 多门店模拟数据
+// store1: 真实数据（上海金茂大厦店）
+// store2/3: 模拟数据（春熙路店、天府广场店），用于演示多店选店流程
 
 export const mockStores = [
   {
@@ -138,7 +139,100 @@ export const mockStores = [
         ]
       },
     ]
-  }
+  },
+  {
+    storeId: '51010501',
+    storeCode: '51010501',
+    storeName: '成都春熙路店',
+    orders: [
+      {
+        mainOrderId: 'XSD-20260630-20101',
+        storeName: '成都春熙路店',
+        status: '处理中',
+        createTime: '2026-06-30 11:00:00',
+        subOrders: [
+          {
+            subOrderId: 'XSD-20260630-20101-001',
+            status: '待发货',
+            products: [
+              { name: '伯牙绝弦原叶鲜奶茶原料-A', qty: 5, unit: '箱' },
+              { name: '茉莉雪芽-D1', qty: 3, unit: '箱' },
+            ]
+          },
+          {
+            subOrderId: 'XSD-20260630-20101-002',
+            status: '备货中',
+            products: [
+              { name: '大号纸杯-蓝银款-1', qty: 2, unit: '箱' },
+              { name: '杯套-金色款-1', qty: 2, unit: '箱' },
+            ]
+          },
+        ]
+      },
+      {
+        mainOrderId: 'XSD-20260629-20055',
+        storeName: '成都春熙路店',
+        status: '处理中',
+        createTime: '2026-06-29 14:20:00',
+        subOrders: [
+          {
+            subOrderId: 'XSD-20260629-20055-001',
+            status: '已发货',
+            products: [
+              { name: '味全鲜牛奶-定制版', qty: 120, unit: '瓶' },
+            ]
+          },
+        ]
+      },
+    ]
+  },
+  {
+    storeId: '51010502',
+    storeCode: '51010502',
+    storeName: '成都天府广场店',
+    orders: [
+      {
+        mainOrderId: 'XSD-20260630-30201',
+        storeName: '成都天府广场店',
+        status: '处理中',
+        createTime: '2026-06-30 09:30:00',
+        subOrders: [
+          {
+            subOrderId: 'XSD-20260630-30201-001',
+            status: '备货中',
+            products: [
+              { name: '东方美人乌龙茶-A', qty: 4, unit: '箱' },
+              { name: '黑醋栗石崖甜茶（调味茶）-B', qty: 2, unit: '箱' },
+              { name: '栀香毛峰茶-A', qty: 2, unit: '箱' },
+            ]
+          },
+        ]
+      },
+      {
+        mainOrderId: 'XSD-20260628-30100',
+        storeName: '成都天府广场店',
+        status: '处理中',
+        createTime: '2026-06-28 15:45:00',
+        subOrders: [
+          {
+            subOrderId: 'XSD-20260628-30100-001',
+            status: '部分签收',
+            products: [
+              { name: '冷冻橙汁-E', qty: 8, unit: '瓶' },
+              { name: '速冻调制罗勒水蜜桃汁', qty: 6, unit: '瓶' },
+            ]
+          },
+          {
+            subOrderId: 'XSD-20260628-30100-002',
+            status: '待发货',
+            products: [
+              { name: '外卖封口贴-蓝银款-3', qty: 3, unit: '箱' },
+            ]
+          },
+        ]
+      },
+    ]
+  },
 ];
 
 // Driver info for today's shipped orders

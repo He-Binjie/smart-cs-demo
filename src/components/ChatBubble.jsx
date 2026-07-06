@@ -26,7 +26,7 @@ function BotAvatar() {
   );
 }
 
-export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCall }) {
+export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCall, onSelectStore }) {
   const isUser = msg.type === 'user';
   const isBot = msg.type === 'bot';
   const isOther = msg.type === 'other';
@@ -67,7 +67,8 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
         )}
 
         {/* 卡片消息 */}
-        {msg.cardType === 'order' && <OrderCard onViewOrderList={onViewOrderList} onViewMainOrder={onViewMainOrder} />}
+        {msg.cardType === 'store-select' && <StoreSelectCard onSelectStore={onSelectStore} />}
+        {msg.cardType === 'order' && <OrderCard onViewOrderList={onViewOrderList} onViewMainOrder={onViewMainOrder} storeId={msg.storeId} />}
         {msg.cardType === 'logistics' && <LogisticsCard onCall={onCall} />}
         {msg.cardType === 'faq' && <FAQCard faq={msg.faqData} />}
         {msg.cardType === 'transfer' && <TransferCard />}
@@ -90,9 +91,91 @@ const STATUS_COLORS = {
   '部分签收': '#ff9500',
 };
 
+// ===== 多门店选店卡片 =====
+function StoreSelectCard({ onSelectStore }) {
+  return (
+    <div
+      style={{
+        background: '#fff',
+        border: '1px solid #e5e6e8',
+        borderRadius: 16,
+        maxWidth: 280,
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          padding: '10px 12px',
+          borderBottom: '1px solid #f0f1f3',
+          background: '#3370ff',
+          color: '#fff',
+          fontWeight: 600,
+          fontSize: 14,
+        }}
+      >
+        🏪 请选择门店
+      </div>
+      <div style={{ padding: '4px 0' }}>
+        {mockStores.map((store, idx) => {
+          const orderCount = store.orders.length;
+          const isLast = idx === mockStores.length - 1;
+          return (
+            <div
+              key={store.storeId}
+              onClick={() => onSelectStore && onSelectStore(store.storeId)}
+              style={{
+                padding: '10px 12px',
+                borderBottom: isLast ? 'none' : '1px solid #f5f6f7',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 13, color: '#1f2329' }}>
+                  {store.storeName}
+                </div>
+                <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2 }}>
+                  {store.storeCode}
+                </div>
+              </div>
+              <div style={{
+                padding: '2px 8px',
+                borderRadius: 10,
+                fontSize: 11,
+                fontWeight: 500,
+                color: '#3370ff',
+                background: '#f0f5ff',
+                border: '1px solid #adc6ff',
+              }}>
+                {orderCount}单
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ padding: '8px 12px', borderTop: '1px solid #f0f1f3' }}>
+        <div style={{ fontSize: 11, color: '#8f959e' }}>
+          👆 点击门店查看该店近7天未完成订单
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ===== 订单查询卡片（飞书卡片风格） =====
-function OrderCard({ onViewOrderList, onViewMainOrder }) {
-  const allOrders = mockStores.flatMap(s => s.orders);
+function OrderCard({ onViewOrderList, onViewMainOrder, storeId }) {
+  // 如果指定了storeId，只显示该门店的订单；否则显示所有门店
+  const stores = storeId
+    ? mockStores.filter(s => s.storeId === storeId)
+    : mockStores;
+  const allOrders = stores.flatMap(s => s.orders)
+    .sort((a, b) => new Date(a.createTime) - new Date(b.createTime)); // 由远到近
+  const storeName = stores.length === 1 ? stores[0].storeName : '全部门店';
 
   return (
     <div
@@ -115,7 +198,7 @@ function OrderCard({ onViewOrderList, onViewMainOrder }) {
           fontSize: 14,
         }}
       >
-        📋 订单查询结果
+        📋 {storeName} · 订单查询
       </div>
 
       {/* Order List - each row clickable */}

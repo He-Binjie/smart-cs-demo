@@ -56,7 +56,7 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
       }
       groups[sub.mainOrderId].subOrders.push(sub);
     });
-    return Object.values(groups);
+    return Object.values(groups).sort((a, b) => new Date(a.createTime) - new Date(b.createTime)); // 由远到近
   }, [flatSubOrders]);
 
   // Filter sub-orders

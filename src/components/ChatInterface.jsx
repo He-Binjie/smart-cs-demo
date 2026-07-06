@@ -69,6 +69,18 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
     setMessages(prev => [...prev, { ...msg, id: nextId.current++ }]);
   };
 
+  // 选店后展示该门店的订单
+  const handleSelectStore = (storeId) => {
+    const store = mockStores.find(s => s.storeId === storeId);
+    if (!store) return;
+    addMessage({ type: 'user', user: USER, text: `查看${store.storeName}的订单`, time: getTime() });
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      addMessage({ type: 'bot', user: BOT, cardType: 'order', storeId, time: getTime() });
+    }, 600);
+  };
+
   const simulateBotReply = (userText) => {
     setIsTyping(true);
     const delay = 800 + Math.random() * 600;
@@ -95,9 +107,9 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
         return;
       }
 
-      // 4. 订单查询
+      // 4. 订单查询 → 先展示选店卡片
       if (/订单|查订单|订货/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'order', time: getTime() });
+        addMessage({ type: 'bot', user: BOT, cardType: 'store-select', time: getTime() });
         return;
       }
 
@@ -189,6 +201,7 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
           onViewOrderList={onViewOrderList}
           onViewMainOrder={onViewMainOrder}
           onCall={onCall}
+          onSelectStore={handleSelectStore}
         />
       );
     }
@@ -200,6 +213,7 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
         onViewOrderList={onViewOrderList}
         onViewMainOrder={onViewMainOrder}
         onCall={onCall}
+        onSelectStore={handleSelectStore}
       />
     );
   };

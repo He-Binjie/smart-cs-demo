@@ -213,14 +213,6 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
     }
   };
 
-  // ===== Entry 3: Plus menu =====
-  const handlePlusMenuClick = (item) => {
-    setShowPlusMenu(false);
-    if (item === 'privateChat') {
-      onOpenPrivateChat && onOpenPrivateChat();
-    }
-  };
-
   const renderMessage = (msg) => {
     if (msg.type === 'system') {
       return (
@@ -347,7 +339,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
 
       {/* 底部输入区 + Entry 3 */}
       <div className="input-area" style={{ position: 'relative' }}>
-        {/* Entry 3: Plus menu button */}
+        {/* Entry 3: Plus toggle button */}
         <div
           onClick={() => setShowPlusMenu(!showPlusMenu)}
           style={{
@@ -358,74 +350,52 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
             transition: 'all 0.2s',
           }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke={showPlusMenu ? '#fff' : '#646a73'} strokeWidth="2.5" strokeLinecap="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
+          {showPlusMenu ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="#646a73" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          )}
         </div>
 
-        {/* Plus menu popup */}
-        {showPlusMenu && (
+        {showPlusMenu ? (
+          /* 输入框变为"茶小链"按钮 */
+          <button
+            onClick={() => { setShowPlusMenu(false); onOpenPrivateChat && onOpenPrivateChat(); }}
+            style={{
+              flex: 1, padding: '10px 0',
+              background: 'linear-gradient(135deg, #8B1A1A, #C41E3A)',
+              border: 'none', borderRadius: 20,
+              color: '#fff', fontSize: 14, fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              boxShadow: '0 2px 8px rgba(196,30,58,0.3)',
+              transition: 'all 0.2s',
+            }}
+          >
+            <span style={{ fontSize: 16 }}>🤖</span>
+            茶小链
+          </button>
+        ) : (
           <>
-            <div onClick={() => setShowPlusMenu(false)}
-              style={{ position: 'fixed', inset: 0, zIndex: 50 }} />
-            <div style={{
-              position: 'absolute', bottom: 48, left: 0,
-              background: '#fff', borderRadius: 12,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-              border: '1px solid #e5e6e8',
-              overflow: 'hidden', zIndex: 51,
-              minWidth: 160,
-              animation: 'slideUp 0.2s ease',
-            }}>
-              <div
-                onClick={() => handlePlusMenuClick('privateChat')}
-                style={{
-                  padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10,
-                  cursor: 'pointer', transition: 'background 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-              >
-                <span style={{ fontSize: 18 }}>🤖</span>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1f2329' }}>联系茶小链</div>
-                  <div style={{ fontSize: 11, color: '#8f959e' }}>进入私聊对话</div>
-                </div>
-              </div>
-              <div style={{ borderTop: '1px solid #f0f1f3' }} />
-              <div
-                style={{
-                  padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10,
-                  cursor: 'pointer', opacity: 0.5,
-                }}
-              >
-                <span style={{ fontSize: 18 }}>📎</span>
-                <div style={{ fontSize: 13, color: '#1f2329' }}>发送文件</div>
-              </div>
-              <div
-                style={{
-                  padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10,
-                  cursor: 'pointer', opacity: 0.5,
-                }}
-              >
-                <span style={{ fontSize: 18 }}>📷</span>
-                <div style={{ fontSize: 13, color: '#1f2329' }}>拍摄</div>
-              </div>
-            </div>
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSend()}
+              placeholder="@茶小链 输入您的问题..."
+              style={{ flex: 1 }}
+            />
+            <button onClick={handleSend} disabled={!input.trim()}>发送</button>
           </>
         )}
-
-        <input
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSend()}
-          placeholder="@茶小链 输入您的问题..."
-          style={{ flex: 1 }}
-        />
-        <button onClick={handleSend} disabled={!input.trim()}>发送</button>
       </div>
 
       {/* Entry 1: Profile Card Overlay */}

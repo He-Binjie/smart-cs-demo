@@ -357,14 +357,14 @@ export const todayDrivers = [
   { type: '配送', name: '李师傅', phone: '139****1234' },
 ];
 
-// 子订单状态汇总
+// 子订单状态汇总 - 返回数组格式 [{status, count}] 供 ChatBubble map 渲染
 export function aggregateSubOrderStatus(order) {
   const subs = order.subOrders || [];
   const statusCount = {};
   subs.forEach(s => {
     statusCount[s.status] = (statusCount[s.status] || 0) + 1;
   });
-  return { total: subs.length, statusCount };
+  return Object.entries(statusCount).map(([status, count]) => ({ status, count }));
 }
 
 // 商品汇总（用于欢迎卡片）

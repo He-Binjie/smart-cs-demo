@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ChatInterface, { DEMO_SCENARIOS } from './components/ChatInterface';
 import PrivateChat from './components/PrivateChat';
 import OrderList from './components/OrderList';
+import TopicView from './components/TopicView';
 
 // ===== Phone Call Simulation Overlay =====
 function PhoneCallOverlay({ name, phone, onClose }) {
@@ -271,6 +272,8 @@ export default function App() {
   const handleCloseCall = () => setPhoneCall(null);
   const handleOpenPrivateChat = () => setView('privateChat');
   const handleBackFromPrivateChat = () => setView('chat');
+  const handleOpenTopic = () => setView('topic');
+  const handleBackFromTopic = () => setView('chat');
 
   return (
     <div className="h-full w-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
@@ -318,7 +321,7 @@ export default function App() {
             {/* Main Content */}
             <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {view === 'chat' && (
-                <ChatInterface ref={chatRef} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenPrivateChat={handleOpenPrivateChat} />
+                <ChatInterface ref={chatRef} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenPrivateChat={handleOpenPrivateChat} onOpenTopic={handleOpenTopic} />
               )}
               {view === 'privateChat' && (
                 <div className="page-slide-in h-full">
@@ -328,6 +331,11 @@ export default function App() {
               {view === 'orderList' && (
                 <div className="page-slide-in h-full">
                   <OrderList onBack={handleBack} selectedMainOrderId={selectedMainOrderId} onCall={handleCall} />
+                </div>
+              )}
+              {view === 'topic' && (
+                <div className="page-slide-in h-full">
+                  <TopicView onBack={handleBackFromTopic} />
                 </div>
               )}
             </div>

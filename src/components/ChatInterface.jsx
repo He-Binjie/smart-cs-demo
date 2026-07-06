@@ -49,7 +49,7 @@ export const DEMO_SCENARIOS = [
 // ===== Welcome message text =====
 const WELCOME_TEXT = '大家好，我是茶小链，已加入本群。我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n有任何问题随时 @我 即可。';
 
-export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall, onOpenPrivateChat }, ref) {
+export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall, onOpenPrivateChat, onOpenTopic }, ref) {
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [messages, setMessages] = useState([
@@ -104,7 +104,11 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         if (scenarioType === 'transfer1') {
           addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
         } else {
-          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-thread', time: getTime() });
+          // 方式2：跳转到话题页面
+          addMessage({ type: 'bot', user: BOT, text: '正在为您创建话题并转接人工客服...', time: getTime() });
+          setTimeout(() => {
+            onOpenTopic && onOpenTopic();
+          }, 800);
         }
         return;
       }

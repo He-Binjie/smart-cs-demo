@@ -34,7 +34,7 @@ const USER = { name: '张店长（月亮湾店）', avatar: '张', color: '#8B5C
 
 const PVT_WELCOME = '你好！我是茶小链，您的供应链智能助手。\n\n我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n请直接输入您的问题。';
 
-export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onViewMainOrder, onCall, onOpenTopic }, ref) {
+export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onViewMainOrder, onCall, onOpenGroupChat }, ref) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -70,9 +70,9 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
       const text = userText;
 
       if (/人工|真人|客服/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, text: '正在为您创建话题并转接人工客服...', time: getTime() });
+        addMessage({ type: 'bot', user: BOT, text: '正在为您创建专属服务群并转接人工客服...', time: getTime() });
         setTimeout(() => {
-          onOpenTopic && onOpenTopic();
+          onOpenGroupChat && onOpenGroupChat();
         }, 800);
         return;
       }

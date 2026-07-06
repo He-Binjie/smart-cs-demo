@@ -3,6 +3,7 @@ import ChatInterface, { DEMO_SCENARIOS } from './components/ChatInterface';
 import PrivateChat from './components/PrivateChat';
 import OrderList from './components/OrderList';
 import TopicView from './components/TopicView';
+import GroupChatView from './components/GroupChatView';
 
 // ===== Phone Call Simulation Overlay =====
 function PhoneCallOverlay({ name, phone, onClose }) {
@@ -274,6 +275,8 @@ export default function App() {
   const handleBackFromPrivateChat = () => setView('chat');
   const handleOpenTopic = () => setView('topic');
   const handleBackFromTopic = () => setView('chat');
+  const handleOpenGroupChat = () => setView('groupChat');
+  const handleBackFromGroupChat = () => setView('privateChat');
 
   return (
     <div className="h-full w-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
@@ -325,7 +328,7 @@ export default function App() {
               )}
               {view === 'privateChat' && (
                 <div className="page-slide-in h-full">
-                  <PrivateChat ref={privateChatRef} onBack={handleBackFromPrivateChat} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenTopic={handleOpenTopic} />
+                  <PrivateChat ref={privateChatRef} onBack={handleBackFromPrivateChat} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenGroupChat={handleOpenGroupChat} />
                 </div>
               )}
               {view === 'orderList' && (
@@ -336,6 +339,11 @@ export default function App() {
               {view === 'topic' && (
                 <div className="page-slide-in h-full">
                   <TopicView onBack={handleBackFromTopic} />
+                </div>
+              )}
+              {view === 'groupChat' && (
+                <div className="page-slide-in h-full">
+                  <GroupChatView onBack={handleBackFromGroupChat} />
                 </div>
               )}
             </div>

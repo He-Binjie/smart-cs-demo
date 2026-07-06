@@ -445,9 +445,27 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
 
       {/* Shipping date + estimated arrival (below sub-order number) */}
       {shipDate && (
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '8px', fontSize: '11px', color: '#8f959e' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', fontSize: '11px', color: '#8f959e', flexWrap: 'wrap' }}>
           <span>发货：{shipDate}</span>
           <span>预计到达：{estimatedArrival}</span>
+          {sub.status === '已发货' && (
+            <a
+              href="https://www.kuaidi100.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#3370ff',
+                textDecoration: 'none',
+                fontSize: '11px',
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '2px',
+              }}
+            >
+              📦 快递单号查询
+            </a>
+          )}
         </div>
       )}
 

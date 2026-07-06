@@ -37,7 +37,8 @@ const OTHER = { name: '李BP', avatar: '李', color: '#10B981' };
 // ===== Demo scenarios (7 items) =====
 const DEMO_SCENARIOS = [
   { label: '🚚 货到哪了', text: '今天的货什么时候到 司机电话多少' },
-  { label: '📦 查订单', text: '查一下我的订单' },
+  { label: '📦 查订单(多店)', text: '查一下我的订单', scenario: 'multi' },
+  { label: '📦 查订单(单店)', text: '查一下我的订单', scenario: 'single' },
   { label: '❓ 问FAQ', text: '下午四点以后下单今天能到吗' },
   { label: '👤 转人工', text: '转人工' },
   { label: '🎫 转工单', text: '帮我提交工单' },
@@ -81,7 +82,7 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
     }, 600);
   };
 
-  const simulateBotReply = (userText) => {
+  const simulateBotReply = (userText, scenarioType) => {
     setIsTyping(true);
     const delay = 800 + Math.random() * 600;
 
@@ -107,9 +108,23 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
         return;
       }
 
-      // 4. 订单查询 → 先展示选店卡片
+      // 4. 订单查询 → 根据场景分流
       if (/订单|查订单|订货/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'store-select', time: getTime() });
+        if (scenarioType === 'single') {
+          // 单店：跳过选店，直接展示该店订单
+          const singleStore = mockStores.find(s => s.storeId === '317336068380740992');
+          addMessage({ type: 'bot', user: BOT, text: `您绑定了1家门店「${singleStore.storeName}」，直接为您查询近7天未完成订单。`, time: getTime() });
+          setTimeout(() => {
+            addMessage({ type: 'bot', user: BOT, cardType: 'order', storeId: '317336068380740992', time: getTime() });
+          }, 400);
+        } else {
+          // 多店：展示选店卡片（仅展示多店的3个南通门店）
+          const multiStores = mockStores.filter(s => s.storeId !== '317336068380740992');
+          addMessage({ type: 'bot', user: BOT, text: '您绑定了3家门店，请选择要查询的门店：', time: getTime() });
+          setTimeout(() => {
+            addMessage({ type: 'bot', user: BOT, cardType: 'store-select', stores: multiStores, time: getTime() });
+          }, 400);
+        }
         return;
       }
 
@@ -161,7 +176,7 @@ export default function ChatInterface({ onViewOrderList, onViewMainOrder, onCall
 
   const handleScenario = (scenario) => {
     addMessage({ type: 'user', user: USER, text: `@茶小链 ${scenario.text}`, time: getTime() });
-    simulateBotReply(scenario.text);
+    simulateBotReply(scenario.text, scenario.scenario);
   };
 
   const getTime = () => {

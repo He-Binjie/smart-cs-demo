@@ -16,11 +16,37 @@ const STATUS_COLORS = {
 export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
   const [activeFilter, setActiveFilter] = useState('全部');
   const [expandedProducts, setExpandedProducts] = useState({});
+  const [selectedStoreId, setSelectedStoreId] = useState(null);
 
-  // Flatten all sub-orders with parent order info
+  // Get all unique stores
+  const allStores = useMemo(() => {
+    return mockStores.map(s => ({ storeId: s.storeId, storeName: s.storeName }));
+  }, []);
+
+  // Initialize selectedStoreId on mount
+  useMemo(() => {
+    if (!selectedStoreId) {
+      // If viewing a specific order, find its store
+      if (selectedMainOrderId) {
+        for (const store of mockStores) {
+          if (store.orders.some(o => o.mainOrderId === selectedMainOrderId)) {
+            setSelectedStoreId(store.storeId);
+            break;
+          }
+        }
+      } else {
+        // Default to first store
+        setSelectedStoreId(allStores[0]?.storeId);
+      }
+    }
+  }, [selectedMainOrderId, selectedStoreId, allStores]);
+
+  // Flatten all sub-orders with parent order info, filtered by selected store
   const flatSubOrders = useMemo(() => {
     const result = [];
     mockStores.forEach(store => {
+      // Filter by selected store
+      if (selectedStoreId && store.storeId !== selectedStoreId) return;
       store.orders.forEach(order => {
         // If selectedMainOrderId is set, only include that main order
         if (selectedMainOrderId && order.mainOrderId !== selectedMainOrderId) return;
@@ -38,7 +64,7 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
       });
     });
     return result;
-  }, [selectedMainOrderId]);
+  }, [selectedMainOrderId, selectedStoreId]);
 
   // Group sub-orders by mainOrderId
   const groupedOrders = useMemo(() => {
@@ -69,10 +95,6 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
 
   // Total sub-orders count
   const totalSubOrders = flatSubOrders.length;
-
-  // Store name (use first store or combined)
-  const storeNames = [...new Set(mockStores.map(s => s.storeName))];
-  const storeDisplay = storeNames.length === 1 ? storeNames[0] : storeNames.join('、');
 
   const toggleExpand = (key) => {
     setExpandedProducts(prev => ({ ...prev, [key]: !prev[key] }));
@@ -111,29 +133,56 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
         </button>
         <div style={{ flex: 1 }}>
           <h1 style={{ fontSize: '17px', fontWeight: 600, color: '#1f2329', margin: 0, lineHeight: 1.3 }}>
-            {selectedMainOrderId ? '订单详情' : '订单详情'}
+            订单详情
           </h1>
-          {selectedMainOrderId && (
-            <p style={{ fontSize: '11px', color: '#8f959e', margin: '2px 0 0 0' }}>
-              {selectedMainOrderId}
-            </p>
-          )}
         </div>
       </div>
 
-      {/* Store Info */}
+      {/* Store Selector (single-select) */}
+      {allStores.length > 1 && (
+        <div style={{
+          flexShrink: 0,
+          padding: '10px 12px',
+          background: '#fff',
+          borderBottom: '1px solid #e5e6e8',
+          display: 'flex',
+          gap: '8px',
+          overflowX: 'auto',
+        }}>
+          {allStores.map(store => (
+            <button
+              key={store.storeId}
+              onClick={() => setSelectedStoreId(store.storeId)}
+              style={{
+                flexShrink: 0,
+                padding: '6px 14px',
+                borderRadius: '18px',
+                fontSize: '13px',
+                fontWeight: 500,
+                whiteSpace: 'nowrap',
+                border: selectedStoreId === store.storeId ? '1px solid #3370ff' : '1px solid #e5e6e8',
+                background: selectedStoreId === store.storeId ? '#e8f3ff' : '#f5f6f7',
+                color: selectedStoreId === store.storeId ? '#3370ff' : '#646a73',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              {store.storeName}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Sub-order count */}
       <div style={{
         flexShrink: 0,
-        padding: '10px 16px',
+        padding: '8px 16px',
         background: '#fff',
         borderBottom: '1px solid #e5e6e8',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
       }}>
-        <span style={{ fontSize: '14px', fontWeight: 500, color: '#1f2329' }}>
-          {storeDisplay}
-        </span>
         <span style={{ fontSize: '12px', color: '#8f959e' }}>
           共 {totalSubOrders} 个子订单
         </span>

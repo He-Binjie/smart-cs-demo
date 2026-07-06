@@ -67,7 +67,7 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
         )}
 
         {/* 卡片消息 */}
-        {msg.cardType === 'store-select' && <StoreSelectCard onSelectStore={onSelectStore} />}
+        {msg.cardType === 'store-select' && <StoreSelectCard onSelectStore={onSelectStore} stores={msg.stores} />}
         {msg.cardType === 'order' && <OrderCard onViewOrderList={onViewOrderList} onViewMainOrder={onViewMainOrder} storeId={msg.storeId} />}
         {msg.cardType === 'logistics' && <LogisticsCard onCall={onCall} />}
         {msg.cardType === 'faq' && <FAQCard faq={msg.faqData} />}
@@ -92,7 +92,8 @@ const STATUS_COLORS = {
 };
 
 // ===== 多门店选店卡片 =====
-function StoreSelectCard({ onSelectStore }) {
+function StoreSelectCard({ onSelectStore, stores }) {
+  const displayStores = stores || mockStores;
   return (
     <div
       style={{
@@ -116,15 +117,14 @@ function StoreSelectCard({ onSelectStore }) {
         🏪 请选择门店
       </div>
       <div style={{ padding: '4px 0' }}>
-        {mockStores.map((store, idx) => {
-          const orderCount = store.orders.length;
-          const isLast = idx === mockStores.length - 1;
+        {displayStores.map((store, idx) => {
+          const isLast = idx === displayStores.length - 1;
           return (
             <div
               key={store.storeId}
               onClick={() => onSelectStore && onSelectStore(store.storeId)}
               style={{
-                padding: '10px 12px',
+                padding: '12px 14px',
                 borderBottom: isLast ? 'none' : '1px solid #f5f6f7',
                 cursor: 'pointer',
                 display: 'flex',
@@ -135,32 +135,19 @@ function StoreSelectCard({ onSelectStore }) {
               onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              <div>
-                <div style={{ fontWeight: 600, fontSize: 13, color: '#1f2329' }}>
-                  {store.storeName}
-                </div>
-                <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2 }}>
-                  {store.storeCode}
-                </div>
+              <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2329' }}>
+                {store.storeName}
               </div>
-              <div style={{
-                padding: '2px 8px',
-                borderRadius: 10,
-                fontSize: 11,
-                fontWeight: 500,
-                color: '#3370ff',
-                background: '#f0f5ff',
-                border: '1px solid #adc6ff',
-              }}>
-                {orderCount}单
-              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8f959e" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
             </div>
           );
         })}
       </div>
       <div style={{ padding: '8px 12px', borderTop: '1px solid #f0f1f3' }}>
         <div style={{ fontSize: 11, color: '#8f959e' }}>
-          👆 点击门店查看该店近7天未完成订单
+          👆 请选择您要查询的门店
         </div>
       </div>
     </div>
@@ -221,17 +208,14 @@ function OrderCard({ onViewOrderList, onViewMainOrder, storeId }) {
             onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
           >
-            {/* Top row: store info + status */}
+            {/* Top row: order info + status */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              {/* Left: store name + order number + time */}
+              {/* Left: order number + time */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontWeight: 600, fontSize: 13, color: '#1f2329', lineHeight: '18px' }}>
-                  {order.storeName}
-                </div>
-                <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2, lineHeight: '16px' }}>
                   {order.mainOrderId}
                 </div>
-                <div style={{ fontSize: 11, color: '#8f959e', lineHeight: '16px' }}>
+                <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2, lineHeight: '16px' }}>
                   {order.createTime}
                 </div>
               </div>

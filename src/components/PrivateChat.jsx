@@ -35,9 +35,7 @@ const USER = { name: '张店长（月亮湾店）', avatar: '张', color: '#8B5C
 const PVT_WELCOME = '你好！我是茶小链，您的供应链智能助手。\n\n我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n请直接输入您的问题。';
 
 export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onViewMainOrder, onCall }, ref) {
-  const [messages, setMessages] = useState([
-    { id: 1, type: 'bot', user: BOT, cardType: 'welcome', text: PVT_WELCOME, time: getTime() },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef(null);
@@ -211,6 +209,57 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
             </div>
           </div>
         )}
+      </div>
+
+      {/* 悬浮快捷菜单 */}
+      <div style={{
+        display: 'flex', gap: 8, padding: '8px 16px',
+        background: '#fff',
+        borderTop: '1px solid #f0f1f3',
+      }}>
+        <button
+          onClick={() => {
+            addMessage({ type: 'user', user: USER, text: '查物流', time: getTime() });
+            setTimeout(() => {
+              addMessage({ type: 'bot', user: BOT, cardType: 'logistics', time: getTime() });
+            }, 400);
+          }}
+          style={{
+            flex: 1, padding: '8px 0',
+            background: '#f5f7fa',
+            border: '1px solid #e5e6e8',
+            borderRadius: 8,
+            fontSize: 13, fontWeight: 500,
+            color: '#1f2329',
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#e8ecf3'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#f5f7fa'; }}
+        >
+          <span>🚚</span> 查物流
+        </button>
+        <button
+          onClick={() => {
+            onViewOrderList && onViewOrderList();
+          }}
+          style={{
+            flex: 1, padding: '8px 0',
+            background: '#f5f7fa',
+            border: '1px solid #e5e6e8',
+            borderRadius: 8,
+            fontSize: 13, fontWeight: 500,
+            color: '#1f2329',
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#e8ecf3'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#f5f7fa'; }}
+        >
+          <span>📦</span> 查订单
+        </button>
       </div>
 
       {/* 底部输入区 */}

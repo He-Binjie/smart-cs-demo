@@ -448,7 +448,8 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', fontSize: '11px', color: '#8f959e', flexWrap: 'wrap' }}>
           <span>发货：{shipDate}</span>
           <span>预计到达：{estimatedArrival}</span>
-          {sub.status === '已发货' && (
+          {/* TODO: 快递单号查询链接 - 仅直配订单展示，等艾龙提供完整数据后重新开发
+          {sub.status === '已发货' && sub.isDirectDelivery && (
             <a
               href="https://www.kuaidi100.com/"
               target="_blank"
@@ -466,6 +467,7 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
               📦 快递单号查询
             </a>
           )}
+          */}
         </div>
       )}
 

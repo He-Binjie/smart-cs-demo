@@ -202,7 +202,7 @@ function OrderCard({ onViewOrderList, onViewMainOrder, storeId }) {
         return (
           <div
             key={order.mainOrderId}
-            onClick={() => onViewMainOrder && onViewMainOrder(order.mainOrderId)}
+            onClick={() => onViewMainOrder && onViewMainOrder(order.mainOrderId, storeId)}
             style={{
               padding: '8px 12px',
               borderBottom: isLast ? 'none' : '1px solid #f5f6f7',
@@ -254,7 +254,7 @@ function OrderCard({ onViewOrderList, onViewMainOrder, storeId }) {
         }}
       >
         <button
-          onClick={onViewOrderList}
+          onClick={() => onViewOrderList && onViewOrderList(storeId)}
           style={{
             width: '100%',
             padding: '8px 12px',

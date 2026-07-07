@@ -244,6 +244,7 @@ function HomeIndicator() {
 export default function App() {
   const [view, setView] = useState('chat');
   const [selectedMainOrderId, setSelectedMainOrderId] = useState(null);
+  const [selectedStoreId, setSelectedStoreId] = useState(null);
   const [containerScale, setContainerScale] = useState(1);
   const [phoneCall, setPhoneCall] = useState(null); // { name, phone }
   const containerRef = useRef(null);
@@ -266,8 +267,8 @@ export default function App() {
     return () => window.removeEventListener('resize', calcScale);
   }, []);
 
-  const handleViewOrderList = () => { setSelectedMainOrderId(null); setView('orderList'); };
-  const handleViewMainOrder = (mainOrderId) => { setSelectedMainOrderId(mainOrderId); setView('orderList'); };
+  const handleViewOrderList = (storeId) => { setSelectedMainOrderId(null); if (storeId) setSelectedStoreId(storeId); setView('orderList'); };
+  const handleViewMainOrder = (mainOrderId, storeId) => { setSelectedMainOrderId(mainOrderId); if (storeId) setSelectedStoreId(storeId); setView('orderList'); };
   const handleBack = () => setView('chat');
   const handleCall = (name, phone) => setPhoneCall({ name, phone });
   const handleCloseCall = () => setPhoneCall(null);
@@ -333,7 +334,7 @@ export default function App() {
               )}
               {view === 'orderList' && (
                 <div className="page-slide-in h-full">
-                  <OrderList onBack={handleBack} selectedMainOrderId={selectedMainOrderId} onCall={handleCall} />
+                  <OrderList onBack={handleBack} selectedMainOrderId={selectedMainOrderId} selectedStoreId={selectedStoreId} onCall={handleCall} />
                 </div>
               )}
               {view === 'topic' && (

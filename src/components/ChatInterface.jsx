@@ -40,6 +40,8 @@ export const DEMO_SCENARIOS = [
   { label: '📦 查订单(多店)', text: '查一下我的订单', scenario: 'multi' },
   { label: '📦 查订单(单店)', text: '查一下我的订单', scenario: 'single' },
   { label: '❓ 问FAQ', text: '下午四点以后下单今天能到吗' },
+  { label: '🤷 FAQ未命中', text: '你们公司年会什么时候开', scenario: 'faq-miss' },
+  { label: '👋 闲聊', text: '你好', scenario: 'chitchat' },
   { label: '👤 转人工方式1', text: '司机今天态度不太好，帮我找个人处理一下', scenario: 'transfer1' },
   { label: '👤 转人工方式2', text: '这个问题你解决不了，帮我转人工吧', scenario: 'transfer2' },
   { label: '🎫 转工单', text: '帮我提交工单' },
@@ -112,6 +114,28 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         }
         return;
       }
+
+      // 1b. 闲聊场景：问候语 → 标准回复+能力介绍
+      if (scenarioType === 'chitchat' || /^(你好|hello|hi|在吗|嗨|hey|早上好|下午好|晚上好)/i.test(text)) {
+        addMessage({
+          type: 'bot',
+          user: BOT,
+          time: getTime(),
+          text: '你好！我是茶小链，您的供应链智能助手 🍵\n\n我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n\n有任何问题随时 @我 即可~',
+        });
+        return;
+      }
+
+      // 1c. FAQ未命中场景：明确引导转人工
+      if (scenarioType === 'faq-miss') {
+        addMessage({
+          type: 'bot',
+          user: BOT,
+          time: getTime(),
+          text: '抱歉，这个问题暂时无法解答 😅\n\n我的能力范围包括：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n\n如需人工协助，请输入「转人工」联系对应BP。',
+        });
+        return;
+      }
       if (/人工|真人|客服|态度.*不好|找个人|解决不了|处理一下|不满意|投诉.*态度/.test(text)) {
         addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
         setTimeout(() => {
@@ -126,9 +150,12 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         return;
       }
 
-      // 3. 投诉/举报/少货 → 直接转人工
+      // 3. 投诉/举报/少货 → 统一走转人工流程（带历史对话@BP）
       if (/投诉|举报|少了|漏了|漏发|少发|破损|差评|数量不对|没到齐/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'complaint-transfer', time: getTime() });
+        addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
+        }, 600);
         return;
       }
 
@@ -180,12 +207,12 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         return;
       }
 
-      // 9. 兜底回复
+      // 9. 兜底回复 — 引导用户输入"转人工"
       addMessage({
         type: 'bot',
         user: BOT,
         time: getTime(),
-        text: '抱歉，暂时没有找到相关答案，您可以尝试换个方式描述，或输入「转人工」联系BP。',
+        text: '抱歉，这个问题暂时无法解答。\n\n您可以尝试：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 换个方式描述您的问题\n\n如需人工协助，请输入「转人工」联系对应BP。',
       });
     }, delay);
   };

@@ -13,33 +13,34 @@ const STATUS_COLORS = {
   '待支付': { bg: '#fff1f0', text: '#f5222d' },
 };
 
-export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
+export default function OrderList({ onBack, selectedMainOrderId, selectedStoreId: parentStoreId, onCall }) {
   const [activeFilter, setActiveFilter] = useState('全部');
   const [expandedProducts, setExpandedProducts] = useState({});
-  const [selectedStoreId, setSelectedStoreId] = useState(null);
+  const [internalStoreId, setInternalStoreId] = useState(null);
+
+  // Use parent storeId if provided, otherwise manage internally
+  const selectedStoreId = parentStoreId || internalStoreId;
 
   // Get all unique stores
   const allStores = useMemo(() => {
     return mockStores.map(s => ({ storeId: s.storeId, storeName: s.storeName }));
   }, []);
 
-  // Initialize selectedStoreId on mount
+  // Initialize internal selectedStoreId on mount (only if no parent storeId)
   useMemo(() => {
-    if (!selectedStoreId) {
-      // If viewing a specific order, find its store
+    if (!parentStoreId && !internalStoreId) {
       if (selectedMainOrderId) {
         for (const store of mockStores) {
           if (store.orders.some(o => o.mainOrderId === selectedMainOrderId)) {
-            setSelectedStoreId(store.storeId);
+            setInternalStoreId(store.storeId);
             break;
           }
         }
       } else {
-        // Default to first store
-        setSelectedStoreId(allStores[0]?.storeId);
+        setInternalStoreId(allStores[0]?.storeId);
       }
     }
-  }, [selectedMainOrderId, selectedStoreId, allStores]);
+  }, [selectedMainOrderId, internalStoreId, allStores, parentStoreId]);
 
   // Flatten all sub-orders with parent order info, filtered by selected store
   const flatSubOrders = useMemo(() => {
@@ -152,7 +153,7 @@ export default function OrderList({ onBack, selectedMainOrderId, onCall }) {
           <span style={{ fontSize: '13px', color: '#646a73', flexShrink: 0 }}>门店：</span>
           <select
             value={selectedStoreId || ''}
-            onChange={e => setSelectedStoreId(e.target.value)}
+            onChange={e => setInternalStoreId(e.target.value)}
             style={{
               flex: 1,
               padding: '6px 10px',

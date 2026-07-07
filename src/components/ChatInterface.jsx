@@ -43,6 +43,7 @@ export const DEMO_SCENARIOS = [
   { label: '🤷 FAQ未命中', text: '你们公司年会什么时候开', scenario: 'faq-miss' },
   { label: '👋 闲聊', text: '你好', scenario: 'chitchat' },
   { label: '👤 转人工方式1', text: '司机今天态度不太好，帮我找个人处理一下', scenario: 'transfer1' },
+  { label: '👤 转人工方式1→确认', text: '转人工', scenario: 'transfer1-confirm' },
   { label: '👤 转人工方式2', text: '这个问题你解决不了，帮我转人工吧', scenario: 'transfer2' },
   { label: '🎫 转工单', text: '帮我提交工单' },
   { label: '📝 投诉举报', text: '我要投诉 今天到货少了两箱鲜奶 举报供应商' },
@@ -102,9 +103,21 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
       const text = userText;
 
       // 1. 转人工
-      if (scenarioType === 'transfer1' || scenarioType === 'transfer2') {
+      if (scenarioType === 'transfer1' || scenarioType === 'transfer1-confirm' || scenarioType === 'transfer2') {
         if (scenarioType === 'transfer1') {
-          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
+          // 方式1第一步：先引导用户输入"转人工"，确认后才执行
+          addMessage({ 
+            type: 'bot', 
+            user: BOT, 
+            text: '好的，我理解您的需求。如需转接人工服务，请输入「转人工」，我将为您联系对应BP并携带本次对话记录。', 
+            time: getTime() 
+          });
+        } else if (scenarioType === 'transfer1-confirm') {
+          // 方式1第二步：用户确认输入"转人工" → 执行转人工（带前三轮对话@BP）
+          addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
+          setTimeout(() => {
+            addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
+          }, 600);
         } else {
           // 方式2：跳转到话题页面
           addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
@@ -136,11 +149,23 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         });
         return;
       }
-      if (/人工|真人|客服|态度.*不好|找个人|解决不了|处理一下|不满意|投诉.*态度/.test(text)) {
+      // 转人工确认阶段：用户明确输入"转人工" → 执行转人工（带前三轮对话@BP）
+      if (/^转人工$|转人工服务|我要转人工|帮我转人工/.test(text)) {
         addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
         setTimeout(() => {
           addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
         }, 600);
+        return;
+      }
+
+      // 投诉/态度问题引导阶段：识别到投诉意图 → 引导用户输入"转人工"确认
+      if (/态度.*不好|找个人.*处理|解决不了|处理一下|不满意|投诉.*态度|态度.*差|服务.*差/.test(text)) {
+        addMessage({ 
+          type: 'bot', 
+          user: BOT, 
+          text: '非常抱歉给您带来不好的体验 🙏\n\n我理解您希望有人协助处理这个问题。如需转接对应BP人工服务，请输入「转人工」，我将携带本次对话记录为您转接。', 
+          time: getTime() 
+        });
         return;
       }
 

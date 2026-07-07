@@ -292,8 +292,8 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
           <BotAvatar />
         </div>
         <div className="header-info">
-          <h1>霸王茶姬-华东区供应链服务群</h1>
-          <p>500人 · 供应链BP、承运商、门店店长</p>
+          <h1>霸王茶姬-杭州仓供应链服务群</h1>
+          <p>563人 · 供应链BP、承运商、门店店长</p>
         </div>
       </div>
 
@@ -309,6 +309,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
       }}>
         {GROUP_TABS.map(tab => {
           const isBot = tab === '茶小链';
+          const isActive = tab === '消息';
           return (
             <div
               key={tab}
@@ -316,10 +317,10 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
               style={{
                 padding: '7px 12px',
                 fontSize: 12,
-                fontWeight: isBot ? 600 : 400,
-                color: isBot ? '#3370ff' : '#646a73',
-                cursor: isBot ? 'pointer' : 'default',
-                borderBottom: isBot ? '2px solid #3370ff' : '2px solid transparent',
+                fontWeight: isActive ? 600 : 400,
+                color: isActive ? '#3370ff' : '#646a73',
+                cursor: (isBot || isActive) ? 'pointer' : 'default',
+                borderBottom: isActive ? '2px solid #3370ff' : '2px solid transparent',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s',
                 display: 'flex',

@@ -13,7 +13,7 @@ export const mockStores = [
     orders: [
       {
         mainOrderId: "XSD-20260705-04451",
-        status: "已发货",
+        status: "进行中",
         createTime: "2026-07-05 09:30",
         subOrders: [
           {
@@ -63,7 +63,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260702-05605",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-02 09:30",
         subOrders: [
           {
@@ -87,7 +87,7 @@ export const mockStores = [
     orders: [
       {
         mainOrderId: "XSD-20260705-03026",
-        status: "部分签收",
+        status: "进行中",
         createTime: "2026-07-05 09:30",
         subOrders: [
           {
@@ -125,7 +125,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260706-02065",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-06 09:30",
         subOrders: [
           {
@@ -146,7 +146,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260702-05582",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-02 09:30",
         subOrders: [
           {
@@ -170,7 +170,7 @@ export const mockStores = [
     orders: [
       {
         mainOrderId: "XSD-20260705-00858",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-05 09:30",
         subOrders: [
           {
@@ -196,7 +196,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260706-02738",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-06 09:30",
         subOrders: [
           {
@@ -213,7 +213,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260706-04778",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-06 09:30",
         subOrders: [
           {
@@ -227,7 +227,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260702-05962",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-02 09:30",
         subOrders: [
           {
@@ -251,7 +251,7 @@ export const mockStores = [
     orders: [
       {
         mainOrderId: "XSD-20260706-03699",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-06 09:30",
         subOrders: [
           {
@@ -274,7 +274,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260705-04397",
-        status: "已发货",
+        status: "进行中",
         createTime: "2026-07-05 09:30",
         subOrders: [
           {
@@ -315,7 +315,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260630-02744",
-        status: "部分签收",
+        status: "进行中",
         createTime: "2026-06-30 09:30",
         subOrders: [
           {
@@ -333,7 +333,7 @@ export const mockStores = [
       },
       {
         mainOrderId: "XSD-20260702-05776",
-        status: "备货中",
+        status: "进行中",
         createTime: "2026-07-02 09:30",
         subOrders: [
           {

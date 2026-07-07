@@ -40,8 +40,8 @@ export const DEMO_SCENARIOS = [
   { label: '📦 查订单(多店)', text: '查一下我的订单', scenario: 'multi' },
   { label: '📦 查订单(单店)', text: '查一下我的订单', scenario: 'single' },
   { label: '❓ 问FAQ', text: '下午四点以后下单今天能到吗' },
-  { label: '👤 转人工方式1', text: '转人工', scenario: 'transfer1' },
-  { label: '👤 转人工方式2', text: '转人工', scenario: 'transfer2' },
+  { label: '👤 转人工方式1', text: '司机今天态度不太好，帮我找个人处理一下', scenario: 'transfer1' },
+  { label: '👤 转人工方式2', text: '这个问题你解决不了，帮我转人工吧', scenario: 'transfer2' },
   { label: '🎫 转工单', text: '帮我提交工单' },
   { label: '📝 投诉举报', text: '我要投诉 今天到货少了两箱鲜奶 举报供应商' },
 ];
@@ -105,15 +105,18 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
           addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
         } else {
           // 方式2：跳转到话题页面
-          addMessage({ type: 'bot', user: BOT, text: '正在为您创建话题并转接人工客服...', time: getTime() });
+          addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
           setTimeout(() => {
             onOpenTopic && onOpenTopic();
           }, 800);
         }
         return;
       }
-      if (/人工|真人|客服/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
+      if (/人工|真人|客服|态度.*不好|找个人|解决不了|处理一下|不满意|投诉.*态度/.test(text)) {
+        addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
+        }, 600);
         return;
       }
 
@@ -289,8 +292,8 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
           <BotAvatar />
         </div>
         <div className="header-info">
-          <h1>霸王茶姬-供应链服务群</h1>
-          <p>5人 · 供应链BP、承运商、门店店长</p>
+          <h1>霸王茶姬-华东区供应链服务群</h1>
+          <p>500人 · 供应链BP、承运商、门店店长</p>
         </div>
       </div>
 

@@ -86,6 +86,7 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
 
 // ===== 状态颜色映射 =====
 const STATUS_COLORS = {
+  '进行中': '#3370ff',
   '处理中': '#ff9500',
   '已发货': '#3370ff',
   '待审核': '#3370ff',
@@ -324,9 +325,9 @@ function TransferCard() {
 // ===== 转人工方式1：群内@BP + 前3轮对话 =====
 function TransferWithHistoryCard() {
   const historyRounds = [
-    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单（XSD-20260705-04451）状态为"已发货"，预计今天下午2点到达。' },
+    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单（XSD-20260705-04451）状态为"已发货"，预计今天下午到达。' },
     { round: 2, user: '司机电话多少？', bot: '配送司机王师傅，电话 138****5678。如需联系可直接拨打。' },
-    { round: 3, user: '转人工', bot: '好的，正在为您转接人工客服...' },
+    { round: 3, user: '司机今天态度不太好，帮我找个人处理一下', bot: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务' },
   ];
 
   return (
@@ -354,9 +355,9 @@ function TransferWithHistoryCard() {
 function TransferThreadCard() {
   const [expanded, setExpanded] = useState(false);
   const historyRounds = [
-    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单状态为"已发货"，预计今天下午2点到达。' },
+    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单状态为"已发货"，预计今天下午到达。' },
     { round: 2, user: '司机电话多少？', bot: '配送司机王师傅，电话 138****5678。' },
-    { round: 3, user: '转人工', bot: '好的，正在为您转接人工客服...' },
+    { round: 3, user: '这个问题你解决不了，帮我转人工吧', bot: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务' },
   ];
 
   return (
@@ -434,7 +435,7 @@ function TransferGroupCard() {
           <div style={{ marginBottom: 6 }}>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第1轮】</div>
             <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>今天月亮湾店鲜奶到了吗？</div>
-            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>已为您查询，鲜奶订单状态为"已发货"，预计今天下午2点到达。</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>已为您查询，鲜奶订单状态为"已发货"，预计今天下午到达。</div>
           </div>
           <div style={{ marginBottom: 6 }}>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第2轮】</div>
@@ -443,8 +444,8 @@ function TransferGroupCard() {
           </div>
           <div>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第3轮】</div>
-            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>转人工</div>
-            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>好的，正在为您转接人工客服...</div>
+            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>司机今天态度不太好，帮我找个人处理一下</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>实在抱歉，我们紧急处理，正在为您转接对应BP人工服务</div>
           </div>
         </div>
       </div>

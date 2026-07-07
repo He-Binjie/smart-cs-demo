@@ -34,7 +34,7 @@ export const faqData = [
 
 // 物流追踪数据
 export const logisticsData = {
-  shipTime: '2026-07-06 06:30',
+  shipTime: '2026-07-06',
   storeName: '月亮湾店',
   driverName: '王师傅',
   driverPhone: '138-1234-5678',

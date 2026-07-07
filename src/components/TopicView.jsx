@@ -75,7 +75,7 @@ function TopicMessage({ user, text, time, isBot }) {
 // ===== 历史对话摘要卡片 =====
 function HistorySummaryCard() {
   const rounds = [
-    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单（XSD-20260705-04451）状态为"已发货"，预计今天下午2点到达。' },
+    { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单（XSD-20260705-04451）状态为"已发货"，预计今天下午到达。' },
     { round: 2, user: '司机电话多少？', bot: '配送司机王师傅，电话 138****5678。如需联系可直接拨打。' },
     { round: 3, user: '转人工', bot: '好的，正在为您转接人工客服...' },
   ];

@@ -394,8 +394,8 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
   // Mock driver and date info based on status
   const isShipped = sub.status === '已发货' || sub.status === '部分签收';
   const driver = isShipped ? todayDrivers[0] : null;
-  const shipDate = isShipped ? '2026-07-06 08:30' : null;
-  const estimatedArrival = isShipped ? '2026-07-06 14:00' : null;
+  const shipDate = isShipped ? '2026-07-06' : null;
+  const estimatedArrival = isShipped ? '2026-07-06' : null;
 
   return (
     <div style={{

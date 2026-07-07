@@ -86,8 +86,7 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
 
 // ===== 状态颜色映射 =====
 const STATUS_COLORS = {
-  '进行中': '#3370ff',
-  '处理中': '#ff9500',
+  '处理中': '#3370ff',
   '已发货': '#3370ff',
   '待审核': '#3370ff',
   '待支付': '#34c759',

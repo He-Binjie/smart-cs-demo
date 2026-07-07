@@ -385,6 +385,7 @@ function SubOrderBlock({ sub, expanded, onToggle }) {
 
 // ===== Sub-order row (no main order header, used inside grouped view) =====
 function SubOrderRow({ sub, expanded, onToggle, onCall }) {
+  const [copied, setCopied] = useState(false);
   const products = sub.products || [];
   const productLines = products.map(p => `${p.name}×${p.qty}×${p.unit}`);
   const hasMore = productLines.length > 5;
@@ -397,6 +398,16 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
   const driver = isShipped ? todayDrivers[0] : null;
   const shipDate = isShipped ? '2026-07-06' : null;
   const estimatedArrival = isShipped ? '2026-07-06' : null;
+
+  const handleCopy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('复制失败:', err);
+    }
+  };
 
   return (
     <div style={{
@@ -427,21 +438,60 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
         </div>
       )}
 
-      {/* Sub-order number + status */}
+      {/* Sub-order number + copy button + status badges */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <span style={{ fontSize: '12px', color: '#646a73' }}>
-          子单号：{sub.subOrderId}
-        </span>
-        <span style={{
-          fontSize: '11px',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          background: statusColor.bg,
-          color: statusColor.text,
-          fontWeight: 500,
-        }}>
-          {sub.status}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '12px', color: '#646a73' }}>
+            子单号：{sub.subOrderId}
+          </span>
+          <button
+            onClick={() => handleCopy(sub.subOrderId)}
+            style={{
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              padding: '2px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            title="复制子订单号"
+          >
+            {copied ? (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="2.5">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8f959e" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            )}
+          </button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          {sub.isDirectDelivery && (
+            <span style={{
+              fontSize: '11px',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              background: '#E6F7FF',
+              color: '#1890FF',
+              fontWeight: 500,
+            }}>
+              直配
+            </span>
+          )}
+          <span style={{
+            fontSize: '11px',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            background: statusColor.bg,
+            color: statusColor.text,
+            fontWeight: 500,
+          }}>
+            {sub.status}
+          </span>
+        </div>
       </div>
 
       {/* Shipping date + estimated arrival (below sub-order number) */}
@@ -449,26 +499,57 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', fontSize: '11px', color: '#8f959e', flexWrap: 'wrap' }}>
           <span>发货：{shipDate}</span>
           <span>预计到达：{estimatedArrival}</span>
-          {/* TODO: 快递单号查询链接 - 仅直配订单展示，等艾龙提供完整数据后重新开发
-          {sub.status === '已发货' && sub.isDirectDelivery && (
-            <a
-              href="https://www.kuaidi100.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: '#3370ff',
-                textDecoration: 'none',
-                fontSize: '11px',
-                fontWeight: 500,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '2px',
-              }}
-            >
-              📦 快递单号查询
-            </a>
-          )}
-          */}
+        </div>
+      )}
+
+      {/* Direct delivery logistics links */}
+      {sub.isDirectDelivery && (
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '8px',
+          flexWrap: 'wrap',
+        }}>
+          <a
+            href="https://chagee.feishu.cn/share/base/query/shrcnjpLSTyKJGy4CXc8hY7GUqh"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              background: '#F0F5FF',
+              border: '1px solid #D6E4FF',
+              color: '#3370FF',
+              fontSize: '11px',
+              fontWeight: 500,
+              textDecoration: 'none',
+            }}
+          >
+            📘 飞书共享表格
+          </a>
+          <a
+            href="https://www.kuaidi100.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              background: '#F6FFED',
+              border: '1px solid #B7EB8F',
+              color: '#52C41A',
+              fontSize: '11px',
+              fontWeight: 500,
+              textDecoration: 'none',
+            }}
+          >
+            🚚 快递100查询
+          </a>
         </div>
       )}
 

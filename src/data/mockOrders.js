@@ -242,17 +242,16 @@ export const mockStores = [
         ],
       },
       {
-        mainOrderId: "XSD-20260630",
+        mainOrderId: "XSD-20260630-03293",
         status: "进行中",
         createTime: "2026-06-30 09:30",
         subOrders: [
           {
-            subOrderId: "XSD-20260630-03293",
-            status: "发货中",
+            subOrderId: "XSD-20260630-03293-001",
+            status: "已发货",
             isDirectDelivery: true,
             products: [
-              { name: "味全鲜牛奶-定制版", spec: "950ml/盒*12盒/箱", qty: 120, unit: "瓶" },
-              { name: "冰勃朗非氢化基底乳", spec: "1kg/盒*12盒/箱", qty: 24, unit: "箱" },
+              { name: "2.0茶饮机右机头升级服务（现场+泵）", spec: "台", qty: 1, unit: "台" },
             ],
           },
         ],

@@ -528,7 +528,7 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
               textDecoration: 'none',
             }}
           >
-            📘 飞书共享表格
+            📘 查物流单号
           </a>
           <a
             href="https://www.kuaidi100.com/"

@@ -109,7 +109,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
           addMessage({ 
             type: 'bot', 
             user: BOT, 
-            text: '好的，我理解您的需求。如需转接人工服务，请输入「转人工」，我将为您联系对应BP并携带本次对话记录。', 
+            text: '抱歉，这个问题暂时无法解答 😅\n\n我的能力范围包括：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n\n如需人工协助，请输入「转人工」联系对应BP。', 
             time: getTime() 
           });
         } else if (scenarioType === 'transfer1-confirm') {
@@ -163,7 +163,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         addMessage({ 
           type: 'bot', 
           user: BOT, 
-          text: '非常抱歉给您带来不好的体验 🙏\n\n我理解您希望有人协助处理这个问题。如需转接对应BP人工服务，请输入「转人工」，我将携带本次对话记录为您转接。', 
+          text: '抱歉，这个问题暂时无法解答 😅\n\n我的能力范围包括：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n\n如需人工协助，请输入「转人工」联系对应BP。', 
           time: getTime() 
         });
         return;
@@ -177,10 +177,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
 
       // 3. 投诉/举报/少货 → 统一走转人工流程（带历史对话@BP）
       if (/投诉|举报|少了|漏了|漏发|少发|破损|差评|数量不对|没到齐/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
-        setTimeout(() => {
-          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
-        }, 600);
+        addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
         return;
       }
 

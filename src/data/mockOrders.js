@@ -241,6 +241,22 @@ export const mockStores = [
           },
         ],
       },
+      {
+        mainOrderId: "XSD-20260630",
+        status: "进行中",
+        createTime: "2026-06-30 09:30",
+        subOrders: [
+          {
+            subOrderId: "XSD-20260630-03293",
+            status: "发货中",
+            isDirectDelivery: true,
+            products: [
+              { name: "味全鲜牛奶-定制版", spec: "950ml/盒*12盒/箱", qty: 120, unit: "瓶" },
+              { name: "冰勃朗非氢化基底乳", spec: "1kg/盒*12盒/箱", qty: 24, unit: "箱" },
+            ],
+          },
+        ],
+      },
     ],
   },
   {

@@ -1,6 +1,19 @@
+import { useState } from 'react';
+
 export default function SubOrderDetail({ subOrder, onBack }) {
+  const [copied, setCopied] = useState(false);
   const hasDriver = subOrder.drivers && subOrder.drivers.length > 0;
   const totalQty = subOrder.products.reduce((sum, p) => sum + p.qty, 0);
+
+  const handleCopy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('复制失败:', err);
+    }
+  };
 
   return (
     <div className="h-full flex flex-col" style={{ background: 'var(--feishu-bg)' }}>
@@ -13,9 +26,27 @@ export default function SubOrderDetail({ subOrder, onBack }) {
           <h1 className="text-[16px] font-semibold truncate" style={{ color: 'var(--feishu-text-1)' }}>
             子订单详情
           </h1>
-          <p className="text-[11px]" style={{ color: 'var(--feishu-text-3)' }}>
-            {subOrder.subOrderId}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-[11px] truncate" style={{ color: 'var(--feishu-text-3)' }}>
+              {subOrder.subOrderId}
+            </p>
+            <button
+              onClick={() => handleCopy(subOrder.subOrderId)}
+              className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded active:bg-gray-200"
+              title="复制子订单号"
+            >
+              {copied ? (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34C759" strokeWidth="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              ) : (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--feishu-text-3)" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
         <StatusBadge status={subOrder.status} />
       </div>
@@ -63,7 +94,15 @@ export default function SubOrderDetail({ subOrder, onBack }) {
           </div>
           <div className="px-4 py-3 space-y-2.5">
             <InfoRow label="子订单号" value={subOrder.subOrderId} />
-            <InfoRow label="状态" value={subOrder.status} isTag />
+            <div className="flex items-center justify-between">
+              <span className="text-[13px]" style={{ color: 'var(--feishu-text-3)' }}>状态</span>
+              <div className="flex items-center gap-2">
+                {subOrder.isDirectDelivery && (
+                  <span className="feishu-tag" style={{ background: '#E6F7FF', color: '#1890FF' }}>直配</span>
+                )}
+                <StatusBadge status={subOrder.status} />
+              </div>
+            </div>
             <InfoRow label="商品种类" value={`${subOrder.products.length} 种`} />
             <InfoRow label="总数量" value={`${totalQty} 件`} />
           </div>
@@ -95,6 +134,58 @@ export default function SubOrderDetail({ subOrder, onBack }) {
             ))}
           </div>
         </div>
+
+        {/* 直配订单：物流查询链接 */}
+        {subOrder.isDirectDelivery && (
+          <div className="rounded-xl overflow-hidden" style={{ background: 'var(--feishu-white)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--feishu-border)' }}>
+              <span className="text-[14px] font-semibold" style={{ color: 'var(--feishu-text-1)' }}>🔗 物流查询</span>
+            </div>
+            <div className="px-4 py-3 space-y-2">
+              <a
+                href="https://chagee.feishu.cn/share/base/query/shrcnjpLSTyKJGy4CXc8hY7GUqh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg"
+                style={{ background: '#F0F5FF', border: '1px solid #D6E4FF' }}
+              >
+                <div className="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3370FF" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                  <span className="text-[13px] font-medium" style={{ color: '#3370FF' }}>飞书共享表格</span>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3370FF" strokeWidth="2">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </a>
+              <a
+                href="https://www.kuaidi100.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg"
+                style={{ background: '#F6FFED', border: '1px solid #B7EB8F' }}
+              >
+                <div className="flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52C41A" strokeWidth="2">
+                    <rect x="1" y="3" width="15" height="13"/>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+                  <span className="text-[13px] font-medium" style={{ color: '#52C41A' }}>快递100查询</span>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52C41A" strokeWidth="2">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* 操作按钮 */}
         <div className="flex gap-3 pt-2 pb-4">

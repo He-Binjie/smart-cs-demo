@@ -326,7 +326,7 @@ function TransferWithHistoryCard() {
   const historyRounds = [
     { round: 1, user: '今天月亮湾店鲜奶到了吗？', bot: '已为您查询，月亮湾店的鲜奶订单（XSD-20260705-04451）状态为"已发货"，预计今天下午到达。' },
     { round: 2, user: '司机电话多少？', bot: '配送司机王师傅，电话 138****5678。如需联系可直接拨打。' },
-    { round: 3, user: '司机今天态度不太好，帮我找个人处理一下', bot: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务' },
+    { round: 3, user: '我好像下错单了，能帮我处理一下吗', bot: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务' },
   ];
 
   return (
@@ -443,7 +443,7 @@ function TransferGroupCard() {
           </div>
           <div>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第3轮】</div>
-            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>司机今天态度不太好，帮我找个人处理一下</div>
+            <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>我好像下错单了，能帮我处理一下吗</div>
             <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>实在抱歉，我们紧急处理，正在为您转接对应BP人工服务</div>
           </div>
         </div>

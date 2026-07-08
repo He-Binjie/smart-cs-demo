@@ -42,7 +42,7 @@ export const DEMO_SCENARIOS = [
   { label: '❓ 问FAQ', text: '下午四点以后下单今天能到吗' },
   { label: '🤷 FAQ未命中', text: '你们公司年会什么时候开', scenario: 'faq-miss' },
   { label: '👋 闲聊', text: '你好', scenario: 'chitchat' },
-  { label: '👤 转人工方式1', text: '司机今天态度不太好，帮我找个人处理一下', scenario: 'transfer1' },
+  { label: '👤 转人工方式1', text: '我好像下错单了，能帮我处理一下吗', scenario: 'transfer1' },
   { label: '👤 转人工方式1→确认', text: '转人工', scenario: 'transfer1-confirm' },
   { label: '👤 转人工方式2', text: '这个问题你解决不了，帮我转人工吧', scenario: 'transfer2' },
   { label: '🎫 转工单', text: '帮我提交工单' },
@@ -159,7 +159,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
       }
 
       // 投诉/态度问题引导阶段：识别到投诉意图 → 引导用户输入"转人工"确认
-      if (/态度.*不好|找个人.*处理|解决不了|处理一下|不满意|投诉.*态度|态度.*差|服务.*差/.test(text)) {
+      if (/下错单|下错.*单|订错|订错.*单|找个人.*处理|解决不了|处理一下|不满意|投诉.*态度|态度.*差|服务.*差/.test(text)) {
         addMessage({ 
           type: 'bot', 
           user: BOT, 

@@ -69,7 +69,7 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
       setIsTyping(false);
       const text = userText;
 
-      if (/人工|真人|客服|态度.*不好|找个人|解决不了|处理一下|不满意|投诉.*态度/.test(text)) {
+      if (/人工|真人|客服|下错单|订错|找个人|解决不了|处理一下|不满意|投诉.*态度/.test(text)) {
         addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
         setTimeout(() => {
           onOpenGroupChat && onOpenGroupChat();

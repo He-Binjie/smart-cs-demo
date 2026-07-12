@@ -27,7 +27,7 @@ function BotAvatar() {
   );
 }
 
-export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCall, onSelectStore, onBotAvatarClick }) {
+export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCall, onSelectStore, onSelectComplaintType, onSelectTransferStore, onBotAvatarClick }) {
   const isUser = msg.type === 'user';
   const isBot = msg.type === 'bot';
   const isOther = msg.type === 'other';
@@ -79,6 +79,8 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
         {msg.cardType === 'workorder' && <WorkOrderCard />}
         {msg.cardType === 'complaint' && <ComplaintCard description={msg.complaintDescription} />}
         {msg.cardType === 'complaint-transfer' && <ComplaintTransferCard />}
+        {msg.cardType === 'complaint-type-select' && <ComplaintTypeSelectCard onSelectComplaintType={onSelectComplaintType} />}
+        {msg.cardType === 'transfer-store-select' && <TransferStoreSelectCard onSelectTransferStore={onSelectTransferStore} stores={msg.stores} />}
       </div>
     </div>
   );
@@ -516,6 +518,136 @@ function ComplaintTransferCard() {
         <p style={{ fontSize: 11, color: '#8f959e' }}>
           BP 将在群内协助您处理投诉/举报事宜，包括核实情况、协调供应商及后续跟进。
         </p>
+      </div>
+    </div>
+  );
+}
+
+// ===== 投诉类型选择卡片 =====
+const COMPLAINT_TYPES = [
+  { id: 'logistics', label: '投诉仓储物流', icon: '🚚', desc: '少发/漏发/破损/延迟' },
+  { id: 'bp', label: '投诉BP', icon: '👤', desc: '服务态度/响应不及时' },
+  { id: 'driver', label: '投诉司机态度', icon: '🚗', desc: '态度恶劣/不按规范' },
+  { id: 'food-safety', label: '食品安全', icon: '⚠️', desc: '异味/变质/过期' },
+  { id: 'other', label: '其他', icon: '📋', desc: '以上未涵盖的问题' },
+];
+
+function ComplaintTypeSelectCard({ onSelectComplaintType }) {
+  return (
+    <div
+      style={{
+        background: '#fff',
+        border: '1px solid #e5e6e8',
+        borderRadius: 16,
+        maxWidth: 280,
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          padding: '10px 12px',
+          borderBottom: '1px solid #f0f1f3',
+          background: '#ff3b30',
+          color: '#fff',
+          fontWeight: 600,
+          fontSize: 14,
+        }}
+      >
+        📝 请选择投诉类型
+      </div>
+      <div style={{ padding: '4px 0' }}>
+        {COMPLAINT_TYPES.map((type, idx) => {
+          const isLast = idx === COMPLAINT_TYPES.length - 1;
+          return (
+            <div
+              key={type.id}
+              onClick={() => onSelectComplaintType && onSelectComplaintType(type)}
+              style={{
+                padding: '10px 14px',
+                borderBottom: isLast ? 'none' : '1px solid #f5f6f7',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <span style={{ fontSize: 18 }}>{type.icon}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, fontSize: 13, color: '#1f2329' }}>{type.label}</div>
+                <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2 }}>{type.desc}</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8f959e" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ===== 转人工/投诉选店卡片 =====
+function TransferStoreSelectCard({ onSelectTransferStore, stores }) {
+  const displayStores = stores || mockStores;
+  return (
+    <div
+      style={{
+        background: '#fff',
+        border: '1px solid #e5e6e8',
+        borderRadius: 16,
+        maxWidth: 280,
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          padding: '10px 12px',
+          borderBottom: '1px solid #f0f1f3',
+          background: '#3370ff',
+          color: '#fff',
+          fontWeight: 600,
+          fontSize: 14,
+        }}
+      >
+        🏪 请选择门店
+      </div>
+      <div style={{ padding: '4px 0' }}>
+        {displayStores.map((store, idx) => {
+          const isLast = idx === displayStores.length - 1;
+          return (
+            <div
+              key={store.storeId}
+              onClick={() => onSelectTransferStore && onSelectTransferStore(store.storeId)}
+              style={{
+                padding: '12px 14px',
+                borderBottom: isLast ? 'none' : '1px solid #f5f6f7',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2329' }}>
+                {store.storeName}
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8f959e" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ padding: '8px 12px', borderTop: '1px solid #f0f1f3' }}>
+        <div style={{ fontSize: 11, color: '#8f959e' }}>
+          👆 请选择需要转人工的门店
+        </div>
       </div>
     </div>
   );

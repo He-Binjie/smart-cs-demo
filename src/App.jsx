@@ -1,9 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import ChatInterface, { DEMO_SCENARIOS } from './components/ChatInterface';
-import PrivateChat from './components/PrivateChat';
+import ChatInterface from './components/ChatInterface';
+import PrivateChat, { DEMO_SCENARIOS } from './components/PrivateChat';
 import OrderList from './components/OrderList';
 import TopicView from './components/TopicView';
 import GroupChatView from './components/GroupChatView';
+
+// 群聊入口演示场景（@机器人 → 引导卡片 → 点击跳转私聊）
+const GROUP_SCENARIOS = [
+  { label: '🚚 群里问物流', text: '今天的货什么时候到 司机电话多少' },
+  { label: '📦 群里查订单', text: '查一下我的订单' },
+  { label: '❓ 群里问FAQ', text: '下午四点以后下单今天能到吗' },
+  { label: '👤 群里要转人工', text: '这个问题你解决不了，帮我找个人处理' },
+];
 
 // ===== Phone Call Simulation Overlay =====
 function PhoneCallOverlay({ name, phone, onClose }) {
@@ -274,6 +282,21 @@ export default function App() {
   const handleCall = (name, phone) => setPhoneCall({ name, phone });
   const handleCloseCall = () => setPhoneCall(null);
   const handleOpenPrivateChat = () => setView('privateChat');
+  const handleGroupScenario = (scenario) => {
+    // 切到群聊页面，再触发群聊场景
+    setView('chat');
+    setTimeout(() => {
+      chatRef.current?.handleScenario(scenario);
+    }, 100);
+  };
+  const handleScenarioFromPanel = (scenario) => {
+    // 先切到私聊页面，再触发场景
+    setView('privateChat');
+    // 用 setTimeout 确保页面渲染后再调用
+    setTimeout(() => {
+      privateChatRef.current?.handleScenario(scenario);
+    }, 100);
+  };
   const handleRedirectToPrivateChat = (text, scenarioType) => {
     setPendingQuery({ text, scenarioType, timestamp: Date.now() });
     setView('privateChat');
@@ -390,16 +413,53 @@ export default function App() {
             </div>
           </div>
 
-          {/* Scenario buttons */}
+          {/* Group Chat Scenarios */}
           <div style={{ marginTop: 16, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 12 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', marginBottom: 8 }}>
-              🎬 场景演示
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>
+              🎬 群聊入口
+            </div>
+            <div style={{ fontSize: 10, color: '#64748b', marginBottom: 8 }}>
+              @机器人 → 引导卡片 → 点击跳转私聊
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {GROUP_SCENARIOS.map((s, i) => (
+                <button
+                  key={`g-${i}`}
+                  onClick={() => handleGroupScenario(s)}
+                  style={{
+                    padding: '6px 10px',
+                    background: 'rgba(251,191,36,0.12)',
+                    border: '1px solid rgba(251,191,36,0.3)',
+                    borderRadius: 6,
+                    color: '#fcd34d',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(251,191,36,0.25)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(251,191,36,0.12)'; }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Private Chat Scenarios */}
+          <div style={{ marginTop: 12, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>
+              🎬 私聊入口
+            </div>
+            <div style={{ fontSize: 10, color: '#64748b', marginBottom: 8 }}>
+              直接发送 → 机器人即时回复
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {DEMO_SCENARIOS.map((s, i) => (
                 <button
-                  key={i}
-                  onClick={() => chatRef.current?.handleScenario(s)}
+                  key={`p-${i}`}
+                  onClick={() => handleScenarioFromPanel(s)}
                   style={{
                     padding: '6px 10px',
                     background: 'rgba(51,112,255,0.15)',

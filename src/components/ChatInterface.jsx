@@ -34,21 +34,6 @@ const BOT = { name: '茶小链', avatar: 'bot', color: '#C41E3A' };
 const USER = { name: '张店长（月亮湾店）', avatar: '张', color: '#8B5CF6' };
 const OTHER = { name: '李BP', avatar: '李', color: '#10B981' };
 
-// ===== Demo scenarios (7 items) =====
-export const DEMO_SCENARIOS = [
-  { label: '🚚 货到哪了', text: '今天的货什么时候到 司机电话多少' },
-  { label: '📦 查订单(多店)', text: '查一下我的订单', scenario: 'multi' },
-  { label: '📦 查订单(单店)', text: '查一下我的订单', scenario: 'single' },
-  { label: '❓ 问FAQ', text: '下午四点以后下单今天能到吗' },
-  { label: '🤷 FAQ未命中', text: '你们公司年会什么时候开', scenario: 'faq-miss' },
-  { label: '👋 闲聊', text: '你好', scenario: 'chitchat' },
-  { label: '👤 转人工方式1', text: '我好像下错单了，能帮我处理一下吗', scenario: 'transfer1' },
-  { label: '👤 转人工方式1→确认', text: '转人工', scenario: 'transfer1-confirm' },
-  { label: '👤 转人工方式2', text: '这个问题你解决不了，帮我转人工吧', scenario: 'transfer2' },
-  { label: '🎫 转工单', text: '帮我提交工单' },
-  { label: '📝 投诉举报', text: '我要投诉 今天到货少了两箱鲜奶 举报供应商' },
-];
-
 // ===== Welcome message text =====
 const WELCOME_TEXT = '大家好，我是茶小链，已加入本群。我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n有任何问题随时 @我 即可。';
 
@@ -107,11 +92,9 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         user: BOT,
         cardType: 'redirect-to-private',
         time: getTime(),
+        redirectText: userText,
+        redirectScenario: scenarioType,
       });
-      // 延迟1.5秒后自动跳转私聊，让用户看到引导卡片
-      setTimeout(() => {
-        onRedirectToPrivateChat && onRedirectToPrivateChat(userText, scenarioType);
-      }, 1500);
     }, delay);
   };
 
@@ -197,7 +180,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
                 为了保护你的信息隐私并提供更好的服务体验，请前往我的私聊窗口查看回复内容～
               </p>
               <button
-                onClick={() => onOpenPrivateChat && onOpenPrivateChat()}
+                onClick={() => onRedirectToPrivateChat && onRedirectToPrivateChat(msg.redirectText, msg.redirectScenario)}
                 style={{
                   marginTop: 12,
                   width: '100%',

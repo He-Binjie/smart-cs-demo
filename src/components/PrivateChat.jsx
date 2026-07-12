@@ -3,6 +3,21 @@ import ChatBubble from './ChatBubble';
 import { matchFAQ, logisticsData, humanAgents, faqData } from '../data/mockFAQ';
 import { mockStores } from '../data/mockOrders';
 
+// ===== Demo Scenarios (私聊页面专用) =====
+export const DEMO_SCENARIOS = [
+  { label: '🚚 货到哪了', text: '今天的货什么时候到 司机电话多少' },
+  { label: '📦 查订单(多店)', text: '查一下我的订单', scenario: 'multi' },
+  { label: '📦 查订单(单店)', text: '查一下我的订单', scenario: 'single' },
+  { label: '❓ 问FAQ', text: '下午四点以后下单今天能到吗' },
+  { label: '🤷 FAQ未命中', text: '你们公司年会什么时候开', scenario: 'faq-miss' },
+  { label: '👋 闲聊', text: '你好', scenario: 'chitchat' },
+  { label: '👤 转人工(一人一店)', text: '转人工', scenario: 'transfer-single' },
+  { label: '👤 转人工(一人多店)', text: '转人工', scenario: 'transfer-multi' },
+  { label: '📝 投诉(一人一店)', text: '我要投诉', scenario: 'complaint-single' },
+  { label: '📝 投诉(一人多店)', text: '我要投诉', scenario: 'complaint-multi' },
+  { label: '🎫 转工单', text: '帮我提交工单' },
+];
+
 // ===== 茶小链 Bot Avatar =====
 function BotAvatar({ size = 32 }) {
   return (
@@ -82,19 +97,65 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
       setIsTyping(false);
       const text = userText;
 
-      if (/人工|真人|客服|下错单|订错|找个人|解决不了|处理一下|不满意|投诉.*态度/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
+      // 转人工(一人一店) → 直接拉群
+      if (scenarioType === 'transfer-single') {
+        addMessage({ type: 'bot', user: BOT, text: '好的，正在为您转接对应BP人工服务', time: getTime() });
         setTimeout(() => {
           onOpenGroupChat && onOpenGroupChat();
         }, 800);
         return;
       }
-      if (/工单|提交工单/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'workorder', time: getTime() });
+      // 转人工(一人多店) → 先选店 → 再拉群
+      if (scenarioType === 'transfer-multi') {
+        const multiStores = mockStores.filter(s => s.storeId !== '317336068380740992');
+        addMessage({ type: 'bot', user: BOT, text: '您绑定了3家门店，请选择需要转人工的门店：', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-store-select', stores: multiStores, time: getTime() });
+        }, 400);
         return;
       }
-      if (/投诉|举报|少了|漏了|漏发|少发|破损|差评|数量不对|没到齐/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'complaint-transfer', time: getTime() });
+      // 投诉(一人一店) → 先选投诉类型 → 再拉群/工单
+      if (scenarioType === 'complaint-single') {
+        addMessage({ type: 'bot', user: BOT, text: '请选择您要投诉的类型：', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'complaint-type-select', time: getTime() });
+        }, 400);
+        return;
+      }
+      // 投诉(一人多店) → 先选投诉类型 → 再选店 → 再拉群/工单
+      if (scenarioType === 'complaint-multi') {
+        addMessage({ type: 'bot', user: BOT, text: '请选择您要投诉的类型：', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'complaint-type-select', multiStore: true, time: getTime() });
+        }, 400);
+        return;
+      }
+      // 自然语言：转人工意图（未明确说"转人工"）→ 引导
+      if (/下错单|订错|找个人|解决不了|处理一下|不满意/.test(text) && !/转人工/.test(text)) {
+        addMessage({
+          type: 'bot', user: BOT, time: getTime(),
+          text: '抱歉，这个问题暂时无法解答 😅\n\n我的能力范围包括：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n\n如需人工协助，请输入「转人工」联系对应BP。',
+        });
+        return;
+      }
+      // 自然语言：明确说"转人工" → 默认一人一店直接拉群
+      if (/转人工|真人|客服/.test(text)) {
+        addMessage({ type: 'bot', user: BOT, text: '好的，正在为您转接对应BP人工服务', time: getTime() });
+        setTimeout(() => {
+          onOpenGroupChat && onOpenGroupChat();
+        }, 800);
+        return;
+      }
+      // 自然语言：投诉 → 默认一人一店，先选类型
+      if (/投诉|举报/.test(text)) {
+        addMessage({ type: 'bot', user: BOT, text: '请选择您要投诉的类型：', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'complaint-type-select', time: getTime() });
+        }, 400);
+        return;
+      }
+      if (/工单|提交工单/.test(text)) {
+        addMessage({ type: 'bot', user: BOT, cardType: 'workorder', time: getTime() });
         return;
       }
       if (/订单|查订单|订货/.test(text)) {
@@ -153,6 +214,62 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
     simulateBotReply(scenario.text, scenario.scenario);
   };
 
+  // 投诉类型选择后的处理
+  const handleSelectComplaintType = (complaintType) => {
+    addMessage({ type: 'user', user: USER, text: complaintType.label, time: getTime() });
+    // 食品安全走工单路径
+    if (complaintType.id === 'food-safety') {
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        addMessage({ type: 'bot', user: BOT, text: '食品安全问题我们非常重视，已为您生成工单，将由专人跟进处理。', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'workorder', time: getTime() });
+        }, 400);
+      }, 600);
+      return;
+    }
+    // 其他投诉类型 → 检查是否需要选店（通过最近的消息判断）
+    const lastBotMsg = messages.filter(m => m.type === 'bot' && m.cardType === 'complaint-type-select').pop();
+    if (lastBotMsg && lastBotMsg.multiStore) {
+      // 一人多店：选完类型后还要选店
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        const multiStores = mockStores.filter(s => s.storeId !== '317336068380740992');
+        addMessage({ type: 'bot', user: BOT, text: '请选择需要投诉的门店：', time: getTime() });
+        setTimeout(() => {
+          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-store-select', stores: multiStores, time: getTime() });
+        }, 400);
+      }, 600);
+    } else {
+      // 一人一店：直接拉群
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        addMessage({ type: 'bot', user: BOT, text: '收到您的投诉，正在为您转接对应BP人工服务', time: getTime() });
+        setTimeout(() => {
+          onOpenGroupChat && onOpenGroupChat();
+        }, 800);
+      }, 600);
+    }
+  };
+
+  // 转人工/投诉选店后的处理
+  const handleSelectTransferStore = (storeId) => {
+    const store = mockStores.find(s => s.storeId === storeId);
+    if (!store) return;
+    addMessage({ type: 'user', user: USER, text: store.storeName, time: getTime() });
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      addMessage({ type: 'bot', user: BOT, text: `已选择「${store.storeName}」，正在为您转接对应BP人工服务`, time: getTime() });
+      setTimeout(() => {
+        onOpenGroupChat && onOpenGroupChat();
+      }, 800);
+    }, 600);
+  };
+
   useImperativeHandle(ref, () => ({ handleScenario }));
 
   const renderMessage = (msg) => {
@@ -174,13 +291,17 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
       return (
         <ChatBubble key={msg.id} msg={botMsg}
           onViewOrderList={onViewOrderList} onViewMainOrder={onViewMainOrder}
-          onCall={onCall} onSelectStore={handleSelectStore} />
+          onCall={onCall} onSelectStore={handleSelectStore}
+          onSelectComplaintType={handleSelectComplaintType}
+          onSelectTransferStore={handleSelectTransferStore} />
       );
     }
     return (
       <ChatBubble key={msg.id} msg={msg}
         onViewOrderList={onViewOrderList} onViewMainOrder={onViewMainOrder}
-        onCall={onCall} onSelectStore={handleSelectStore} />
+        onCall={onCall} onSelectStore={handleSelectStore}
+        onSelectComplaintType={handleSelectComplaintType}
+        onSelectTransferStore={handleSelectTransferStore} />
     );
   };
 

@@ -194,9 +194,23 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
         addMessage({ type: 'bot', user: BOT, cardType: 'logistics', time: getTime() });
         return;
       }
+      // 闲聊 → 友好回复 + 引导功能
+      if (scenarioType === 'chitchat' || /^(你好|嗨|hi|hello|hey|在吗|在不在|早上好|下午好|晚上好|谢谢|感谢|拜拜|再见|辛苦了|辛苦啦)$/i.test(text)) {
+        const greetings = [
+          '你好呀！很高兴见到你 😊',
+          '嗨～有什么可以帮你的吗？😊',
+          '你好！茶小链随时为你服务 🍵',
+        ];
+        const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+        addMessage({
+          type: 'bot', user: BOT, time: getTime(),
+          text: `${greeting}\n\n我可以帮你处理以下问题：\n🚚 查询物流配送信息\n📦 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n直接输入你的问题即可～`,
+        });
+        return;
+      }
       addMessage({
         type: 'bot', user: BOT, time: getTime(),
-        text: '抱歉，暂时没有找到相关答案，您可以尝试换个方式描述，或输入「转人工」联系BP。',
+        text: '抱歉，暂时没有找到相关答案 😅\n\n您可以尝试：\n🚚 输入「查物流」查看物流信息\n📦 输入「查订单」查看订单状态\n❓ 输入具体问题，如「下午四点以后下单今天能到吗」\n👤 输入「转人工」联系对应BP',
       });
     }, delay);
   };

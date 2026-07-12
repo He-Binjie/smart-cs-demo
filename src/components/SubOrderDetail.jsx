@@ -135,54 +135,34 @@ export default function SubOrderDetail({ subOrder, onBack }) {
           </div>
         </div>
 
-        {/* 直配订单：物流查询链接 */}
-        {subOrder.isDirectDelivery && (
+        {/* 直配订单：物流单号 */}
+        {subOrder.isDirectDelivery && subOrder.trackingNumber && (
           <div className="rounded-xl overflow-hidden" style={{ background: 'var(--feishu-white)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--feishu-border)' }}>
-              <span className="text-[14px] font-semibold" style={{ color: 'var(--feishu-text-1)' }}>🔗 物流查询</span>
+              <span className="text-[14px] font-semibold" style={{ color: 'var(--feishu-text-1)' }}>📮 物流单号</span>
             </div>
-            <div className="px-4 py-3 space-y-2">
-              <a
-                href="https://chagee.feishu.cn/share/base/query/shrcnjpLSTyKJGy4CXc8hY7GUqh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg"
-                style={{ background: '#F0F5FF', border: '1px solid #D6E4FF' }}
-              >
-                <div className="flex items-center gap-2">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3370FF" strokeWidth="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                  </svg>
-                  <span className="text-[13px] font-medium" style={{ color: '#3370FF' }}>飞书共享表格</span>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3370FF" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </a>
-              <a
-                href="https://www.kuaidi100.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg"
-                style={{ background: '#F6FFED', border: '1px solid #B7EB8F' }}
-              >
-                <div className="flex items-center gap-2">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52C41A" strokeWidth="2">
+            <div className="px-4 py-3">
+              <div className="flex items-center justify-between px-3 py-2.5 rounded-lg" style={{ background: '#F0F5FF', border: '1px solid #D6E4FF' }}>
+                <div className="flex items-center gap-2 min-w-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3370FF" strokeWidth="2" className="flex-shrink-0">
                     <rect x="1" y="3" width="15" height="13"/>
                     <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
                     <circle cx="5.5" cy="18.5" r="2.5"/>
                     <circle cx="18.5" cy="18.5" r="2.5"/>
                   </svg>
-                  <span className="text-[13px] font-medium" style={{ color: '#52C41A' }}>快递100查询</span>
+                  <span className="text-[14px] font-mono font-semibold tracking-wide" style={{ color: '#3370FF' }}>{subOrder.trackingNumber}</span>
                 </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52C41A" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </a>
+                <button
+                  onClick={() => handleCopy(subOrder.trackingNumber)}
+                  className="flex-shrink-0 ml-2 px-2 py-1 rounded text-[12px] font-medium"
+                  style={{ background: copied ? '#E8F8EE' : '#3370FF', color: copied ? '#34C759' : '#fff', transition: 'all 0.2s' }}
+                >
+                  {copied ? '✓ 已复制' : '复制'}
+                </button>
+              </div>
+              <p className="text-[11px] mt-2 px-1" style={{ color: 'var(--feishu-text-3)' }}>
+                可复制单号至快递100等平台查询物流进度
+              </p>
             </div>
           </div>
         )}

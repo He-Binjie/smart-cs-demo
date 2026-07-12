@@ -250,6 +250,7 @@ export const mockStores = [
             subOrderId: "XSD-20260630-03293-001",
             status: "已发货",
             isDirectDelivery: true,
+            trackingNumber: "KY4001095626165",
             products: [
               { name: "2.0茶饮机右机头升级服务（现场+泵）", spec: "台", qty: 1, unit: "台" },
             ],

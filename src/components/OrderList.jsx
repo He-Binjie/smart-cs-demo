@@ -502,54 +502,40 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
         </div>
       )}
 
-      {/* Direct delivery logistics links */}
-      {sub.isDirectDelivery && (
+      {/* Direct delivery tracking number */}
+      {sub.isDirectDelivery && sub.trackingNumber && (
         <div style={{
           display: 'flex',
+          alignItems: 'center',
           gap: '8px',
           marginBottom: '8px',
-          flexWrap: 'wrap',
+          padding: '6px 10px',
+          borderRadius: '6px',
+          background: '#F0F5FF',
+          border: '1px solid #D6E4FF',
         }}>
-          <a
-            href="https://chagee.feishu.cn/share/base/query/shrcnjpLSTyKJGy4CXc8hY7GUqh"
-            target="_blank"
-            rel="noopener noreferrer"
+          <span style={{ fontSize: '11px', color: '#646a73', flexShrink: 0 }}>📮 物流单号：</span>
+          <span style={{ fontSize: '12px', fontFamily: 'monospace', fontWeight: 600, color: '#3370FF', letterSpacing: '0.5px' }}>
+            {sub.trackingNumber}
+          </span>
+          <button
+            onClick={() => handleCopy(sub.trackingNumber)}
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '4px 10px',
-              borderRadius: '6px',
-              background: '#F0F5FF',
-              border: '1px solid #D6E4FF',
-              color: '#3370FF',
+              marginLeft: 'auto',
+              border: 'none',
+              background: copied ? '#E8F8EE' : '#3370FF',
+              color: copied ? '#34C759' : '#fff',
               fontSize: '11px',
               fontWeight: 500,
-              textDecoration: 'none',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              flexShrink: 0,
             }}
           >
-            📘 查物流单号
-          </a>
-          <a
-            href="https://www.kuaidi100.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '4px 10px',
-              borderRadius: '6px',
-              background: '#F6FFED',
-              border: '1px solid #B7EB8F',
-              color: '#52C41A',
-              fontSize: '11px',
-              fontWeight: 500,
-              textDecoration: 'none',
-            }}
-          >
-            🚚 快递100查询
-          </a>
+            {copied ? '✓ 已复制' : '复制'}
+          </button>
         </div>
       )}
 

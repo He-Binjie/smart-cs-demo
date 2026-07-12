@@ -52,7 +52,7 @@ export const DEMO_SCENARIOS = [
 // ===== Welcome message text =====
 const WELCOME_TEXT = '大家好，我是茶小链，已加入本群。我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n有任何问题随时 @我 即可。';
 
-export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall, onOpenPrivateChat, onOpenTopic }, ref) {
+export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall, onOpenPrivateChat, onOpenTopic, onRedirectToPrivateChat }, ref) {
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [messages, setMessages] = useState([
@@ -94,148 +94,24 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
     }, 600);
   };
 
+  // 群聊中@机器人 → 统一回复引导消息，引导去私聊查看
   const simulateBotReply = (userText, scenarioType) => {
     setIsTyping(true);
-    const delay = 800 + Math.random() * 600;
+    const delay = 800 + Math.random() * 400;
 
     setTimeout(() => {
       setIsTyping(false);
-      const text = userText;
-
-      // 1. 转人工
-      if (scenarioType === 'transfer1' || scenarioType === 'transfer1-confirm' || scenarioType === 'transfer2') {
-        if (scenarioType === 'transfer1') {
-          // 方式1第一步：先引导用户输入"转人工"，确认后才执行
-          addMessage({ 
-            type: 'bot', 
-            user: BOT, 
-            text: '抱歉，这个问题暂时无法解答 😅\n\n我的能力范围包括：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n\n如需人工协助，请输入「转人工」联系对应BP。', 
-            time: getTime() 
-          });
-        } else if (scenarioType === 'transfer1-confirm') {
-          // 方式1第二步：用户确认输入"转人工" → 执行转人工（带前三轮对话@BP）
-          addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
-          setTimeout(() => {
-            addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
-          }, 600);
-        } else {
-          // 方式2：跳转到话题页面
-          addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
-          setTimeout(() => {
-            onOpenTopic && onOpenTopic();
-          }, 800);
-        }
-        return;
-      }
-
-      // 1b. 闲聊场景：问候语 → 标准回复+能力介绍
-      if (scenarioType === 'chitchat' || /^(你好|hello|hi|在吗|嗨|hey|早上好|下午好|晚上好)/i.test(text)) {
-        addMessage({
-          type: 'bot',
-          user: BOT,
-          time: getTime(),
-          text: '你好！我是茶小链，您的供应链智能助手 🍵\n\n我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n\n有任何问题随时 @我 即可~',
-        });
-        return;
-      }
-
-      // 1c. FAQ未命中场景：明确引导转人工
-      if (scenarioType === 'faq-miss') {
-        addMessage({
-          type: 'bot',
-          user: BOT,
-          time: getTime(),
-          text: '抱歉，这个问题暂时无法解答 😅\n\n我的能力范围包括：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n\n如需人工协助，请输入「转人工」联系对应BP。',
-        });
-        return;
-      }
-      // 转人工确认阶段：用户明确输入"转人工" → 执行转人工（带前三轮对话@BP）
-      if (/^转人工$|转人工服务|我要转人工|帮我转人工/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, text: '实在抱歉，我们紧急处理，正在为您转接对应BP人工服务', time: getTime() });
-        setTimeout(() => {
-          addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
-        }, 600);
-        return;
-      }
-
-      // 投诉/态度问题引导阶段：识别到投诉意图 → 引导用户输入"转人工"确认
-      if (/下错单|下错.*单|订错|订错.*单|找个人.*处理|解决不了|处理一下|不满意|投诉.*态度|态度.*差|服务.*差/.test(text)) {
-        addMessage({ 
-          type: 'bot', 
-          user: BOT, 
-          text: '抱歉，这个问题暂时无法解答 😅\n\n我的能力范围包括：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n\n如需人工协助，请输入「转人工」联系对应BP。', 
-          time: getTime() 
-        });
-        return;
-      }
-
-      // 2. 转工单
-      if (/工单|提交工单/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'workorder', time: getTime() });
-        return;
-      }
-
-      // 3. 投诉/举报/少货 → 统一走转人工流程（带历史对话@BP）
-      if (/投诉|举报|少了|漏了|漏发|少发|破损|差评|数量不对|没到齐/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'transfer-with-history', time: getTime() });
-        return;
-      }
-
-      // 4. 订单查询 → 根据场景分流
-      if (/订单|查订单|订货/.test(text)) {
-        if (scenarioType === 'single') {
-          // 单店：跳过选店，直接展示该店订单
-          const singleStore = mockStores.find(s => s.storeId === '317336068380740992');
-          addMessage({ type: 'bot', user: BOT, text: `您绑定了1家门店「${singleStore.storeName}」，直接为您查询近7天未完成订单。`, time: getTime() });
-          setTimeout(() => {
-            addMessage({ type: 'bot', user: BOT, cardType: 'order', storeId: '317336068380740992', time: getTime() });
-          }, 400);
-        } else {
-          // 多店：展示选店卡片（仅展示多店的3个南通门店）
-          const multiStores = mockStores.filter(s => s.storeId !== '317336068380740992');
-          addMessage({ type: 'bot', user: BOT, text: '您绑定了3家门店，请选择要查询的门店：', time: getTime() });
-          setTimeout(() => {
-            addMessage({ type: 'bot', user: BOT, cardType: 'store-select', stores: multiStores, time: getTime() });
-          }, 400);
-        }
-        return;
-      }
-
-      // 5. 物流 (specific keywords - check before FAQ)
-      if (/司机|电话|配送|物流|到哪|追踪|货.*到|到.*货/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'logistics', time: getTime() });
-        return;
-      }
-
-      // 6. FAQ匹配
-      const faq = matchFAQ(text);
-      if (faq) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'faq', faqData: faq, time: getTime() });
-        return;
-      }
-
-      // 7. Extended FAQ check
-      if (/下单.*到|几点.*到|能到吗|什么时候.*到/.test(text)) {
-        const deliveryFaq = faqData.find(f => f.question.includes('配送时间'));
-        if (deliveryFaq) {
-          addMessage({ type: 'bot', user: BOT, cardType: 'faq', faqData: deliveryFaq, time: getTime() });
-          return;
-        }
-      }
-
-      // 8. 物流 (broader keywords)
-      if (/货|到/.test(text)) {
-        addMessage({ type: 'bot', user: BOT, cardType: 'logistics', time: getTime() });
-        return;
-      }
-
-      // 9. 兜底回复 — 引导用户输入"转人工"
+      // 群内不做功能响应，统一发引导消息 + 私聊deeplink
       addMessage({
         type: 'bot',
         user: BOT,
+        cardType: 'redirect-to-private',
         time: getTime(),
-        text: '抱歉，这个问题暂时无法解答。\n\n您可以尝试：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 换个方式描述您的问题\n\n如需人工协助，请输入「转人工」联系对应BP。',
       });
+      // 延迟1.5秒后自动跳转私聊，让用户看到引导卡片
+      setTimeout(() => {
+        onRedirectToPrivateChat && onRedirectToPrivateChat(userText, scenarioType);
+      }, 1500);
     }, delay);
   };
 
@@ -298,6 +174,52 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
             <span className="message-name">{msg.user.name}</span>
             <div className="bubble">
               <p className="whitespace-pre-wrap">{msg.text}</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 群聊引导去私聊的卡片
+    if (msg.type === 'bot' && msg.cardType === 'redirect-to-private') {
+      return (
+        <div key={msg.id} className="message-row bot animate-slideUp">
+          <div className="avatar bot" onClick={handleBotAvatarClick} style={{ cursor: 'pointer' }}>
+            <BotAvatar />
+          </div>
+          <div className="message-content">
+            <span className="message-name">{msg.user.name}</span>
+            <div className="bubble" style={{ maxWidth: 280, padding: '12px 14px' }}>
+              <p style={{ fontSize: 13, lineHeight: 1.6, color: '#1f2329', margin: 0 }}>
+                你好，我已收到你的问题 👋
+              </p>
+              <p style={{ fontSize: 13, lineHeight: 1.6, color: '#646a73', margin: '8px 0 0' }}>
+                为了保护你的信息隐私并提供更好的服务体验，请前往我的私聊窗口查看回复内容～
+              </p>
+              <button
+                onClick={() => onOpenPrivateChat && onOpenPrivateChat()}
+                style={{
+                  marginTop: 12,
+                  width: '100%',
+                  padding: '10px 0',
+                  background: '#3370ff',
+                  border: 'none',
+                  borderRadius: 8,
+                  color: '#fff',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#2860e0'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#3370ff'; }}
+              >
+                <span>💬</span> 点击这里与我私聊
+              </button>
             </div>
           </div>
         </div>

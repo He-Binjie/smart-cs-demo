@@ -32,9 +32,9 @@ function BotAvatar({ size = 32 }) {
 const BOT = { name: '茶小链', avatar: 'bot', color: '#C41E3A' };
 const USER = { name: '张店长（月亮湾店）', avatar: '张', color: '#8B5CF6' };
 
-const PVT_WELCOME = '你好！我是茶小链，您的供应链智能助手。\n\n我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n请直接输入您的问题。';
+// 私聊无欢迎语，用户直接可用
 
-export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onViewMainOrder, onCall, onOpenGroupChat }, ref) {
+export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onViewMainOrder, onCall, onOpenGroupChat, pendingQuery }, ref) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -46,6 +46,19 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  // 从群聊引导过来时，自动处理用户的问题
+  useEffect(() => {
+    if (pendingQuery && pendingQuery.text) {
+      const { text, scenarioType } = pendingQuery;
+      // 延迟一下再显示，模拟"已经在处理了"的感觉
+      const timer = setTimeout(() => {
+        addMessage({ type: 'user', user: USER, text, time: getTime() });
+        simulateBotReply(text, scenarioType);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [pendingQuery]);
 
   const addMessage = (msg) => {
     setMessages(prev => [...prev, { ...msg, id: nextId.current++ }]);

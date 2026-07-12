@@ -247,6 +247,7 @@ export default function App() {
   const [selectedStoreId, setSelectedStoreId] = useState(null);
   const [containerScale, setContainerScale] = useState(1);
   const [phoneCall, setPhoneCall] = useState(null); // { name, phone }
+  const [pendingQuery, setPendingQuery] = useState(null); // { text, scenarioType }
   const containerRef = useRef(null);
   const chatRef = useRef(null);
   const privateChatRef = useRef(null);
@@ -273,6 +274,10 @@ export default function App() {
   const handleCall = (name, phone) => setPhoneCall({ name, phone });
   const handleCloseCall = () => setPhoneCall(null);
   const handleOpenPrivateChat = () => setView('privateChat');
+  const handleRedirectToPrivateChat = (text, scenarioType) => {
+    setPendingQuery({ text, scenarioType, timestamp: Date.now() });
+    setView('privateChat');
+  };
   const handleBackFromPrivateChat = () => setView('chat');
   const handleOpenTopic = () => setView('topic');
   const handleBackFromTopic = () => setView('chat');
@@ -304,7 +309,8 @@ export default function App() {
             <div style={{ marginBottom: 8 }}>✅ 转人工 / 转工单</div>
             <div style={{ marginBottom: 8 }}>✅ 投诉举报 → 转人工</div>
             <div style={{ color: '#64748b', marginTop: 12, fontSize: 11 }}>
-              ⚠️ 仅 @触发 + 欢迎语<br/>
+              ⚠️ 群聊@→引导去私聊<br/>
+              ⚠️ 所有功能在私聊完成<br/>
               ⚠️ 纯文字交互（无图片/语音）
             </div>
           </div>
@@ -325,11 +331,11 @@ export default function App() {
             {/* Main Content */}
             <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {view === 'chat' && (
-                <ChatInterface ref={chatRef} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenPrivateChat={handleOpenPrivateChat} onOpenTopic={handleOpenTopic} />
+                <ChatInterface ref={chatRef} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenPrivateChat={handleOpenPrivateChat} onOpenTopic={handleOpenTopic} onRedirectToPrivateChat={handleRedirectToPrivateChat} />
               )}
               {view === 'privateChat' && (
                 <div className="page-slide-in h-full">
-                  <PrivateChat ref={privateChatRef} onBack={handleBackFromPrivateChat} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenGroupChat={handleOpenGroupChat} />
+                  <PrivateChat ref={privateChatRef} onBack={handleBackFromPrivateChat} onViewOrderList={handleViewOrderList} onViewMainOrder={handleViewMainOrder} onCall={handleCall} onOpenGroupChat={handleOpenGroupChat} pendingQuery={pendingQuery} />
                 </div>
               )}
               {view === 'orderList' && (
@@ -380,7 +386,7 @@ export default function App() {
               右侧场景按钮<span style={{ color: '#fbbf24', fontWeight: 500 }}>仅用于演示</span>，实际产品中不存在。
             </div>
             <div style={{ marginBottom: 10 }}>
-              实际交互：飞书群中 <span style={{ color: '#60a5fa' }}>@茶小链</span> + 输入问题文字。
+              实际交互：飞书群中 <span style={{ color: '#60a5fa' }}>@茶小链</span> → 引导去私聊 → 私聊中查看回复。
             </div>
           </div>
 

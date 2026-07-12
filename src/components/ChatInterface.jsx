@@ -314,21 +314,22 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         <div
           onClick={() => setShowPlusMenu(!showPlusMenu)}
           style={{
-            width: 32, height: 32, borderRadius: '50%',
+            width: 36, height: 36, borderRadius: '50%',
             background: showPlusMenu ? '#3370ff' : '#f0f1f3',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', flexShrink: 0,
             transition: 'all 0.2s',
+            border: showPlusMenu ? '2px solid #3370ff' : '1px solid #e5e6e8',
           }}
         >
           {showPlusMenu ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           ) : (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
               stroke="#646a73" strokeWidth="2.5" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />

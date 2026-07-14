@@ -55,6 +55,7 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef(null);
   const nextId = useRef(10);
+  const pendingComplaintType = useRef(null); // 投诉类型跨选店步骤传递
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -246,7 +247,8 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
     // 其他投诉类型 → 检查是否需要选店（通过最近的消息判断）
     const lastBotMsg = messages.filter(m => m.type === 'bot' && m.cardType === 'complaint-type-select').pop();
     if (lastBotMsg && lastBotMsg.multiStore) {
-      // 一人多店：选完类型后还要选店
+      // 一人多店：选完类型后还要选店，保存投诉类型
+      pendingComplaintType.current = complaintType.id;
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
@@ -257,13 +259,13 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
         }, 400);
       }, 600);
     } else {
-      // 一人一店：直接拉群
+      // 一人一店：直接拉群，传递投诉类型
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        addMessage({ type: 'bot', user: BOT, text: '收到您的投诉，正在为您转接对应BP人工服务', time: getTime() });
+        addMessage({ type: 'bot', user: BOT, text: '收到您的投诉，正在为您转接对应处理人', time: getTime() });
         setTimeout(() => {
-          onOpenGroupChat && onOpenGroupChat();
+          onOpenGroupChat && onOpenGroupChat(complaintType.id);
         }, 800);
       }, 600);
     }
@@ -274,12 +276,16 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
     const store = mockStores.find(s => s.storeId === storeId);
     if (!store) return;
     addMessage({ type: 'user', user: USER, text: store.storeName, time: getTime() });
+    // 取出待处理的投诉类型（如果有），然后清空
+    const ct = pendingComplaintType.current;
+    pendingComplaintType.current = null;
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      addMessage({ type: 'bot', user: BOT, text: `已选择「${store.storeName}」，正在为您转接对应BP人工服务`, time: getTime() });
+      const actionText = ct ? '投诉' : '转接';
+      addMessage({ type: 'bot', user: BOT, text: `已选择「${store.storeName}」，正在为您${actionText}对应处理人`, time: getTime() });
       setTimeout(() => {
-        onOpenGroupChat && onOpenGroupChat();
+        onOpenGroupChat && onOpenGroupChat(ct);
       }, 800);
     }, 600);
   };

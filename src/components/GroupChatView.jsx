@@ -115,7 +115,17 @@ function HistorySummaryCard() {
   );
 }
 
-export default function GroupChatView({ onBack }) {
+// ===== 投诉类型 → 处理人映射 =====
+const HANDLER_MAP = {
+  logistics: { name: '陈经理', role: '3PL对接人', color: '#F59E0B' },
+  driver: { name: '陈经理', role: '3PL对接人', color: '#F59E0B' },
+  bp: { name: '赵总监', role: '大区负责人', color: '#10B981' },
+  other: { name: '李BP', role: '供应链BP', color: '#3370ff' },
+};
+const DEFAULT_HANDLER = { name: '李BP', role: '供应链BP', color: '#3370ff' };
+
+export default function GroupChatView({ onBack, complaintType }) {
+  const handler = (complaintType && HANDLER_MAP[complaintType]) || DEFAULT_HANDLER;
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef(null);
@@ -144,11 +154,11 @@ export default function GroupChatView({ onBack }) {
     }]);
     setInput('');
 
-    // 模拟BP回复
+    // 模拟处理人回复
     setTimeout(() => {
       setMessages(prev => [...prev, {
         id: nextId.current++,
-        user: { name: '李BP', color: '#3370ff' },
+        user: { name: handler.name, color: handler.color },
         text: '收到，我看一下，马上回复您。',
         time: getTime(),
         isBot: false,
@@ -173,7 +183,7 @@ export default function GroupChatView({ onBack }) {
         </div>
         <div style={{ flex: 1 }}>
           <h1 style={{ fontSize: 15, fontWeight: 600, color: '#1f2329', margin: 0 }}>
-            张店长-李BP-茶小链
+            张店长-{handler.name}-茶小链
           </h1>
           <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2 }}>
             3人 · 专属服务群
@@ -197,7 +207,7 @@ export default function GroupChatView({ onBack }) {
         <GroupMessage isSystem text="「茶小链」已创建专属服务群" />
 
         {/* 成员加入提示 */}
-        <GroupMessage isSystem text="张店长、李BP、茶小链 已加入群聊" />
+        <GroupMessage isSystem text={`张店长、${handler.name}（${handler.role}）、茶小链 已加入群聊`} />
 
         {/* 茶小链发送历史对话 */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
@@ -219,7 +229,7 @@ export default function GroupChatView({ onBack }) {
               border: '1px solid #d6e4ff',
               marginBottom: 8,
             }}>
-              <span style={{ color: '#3370ff', fontWeight: 500 }}>@李BP</span> 门店需要人工协助，已将近期对话记录发送至群内，请及时响应。
+              <span style={{ color: '#3370ff', fontWeight: 500 }}>@{handler.name}</span> 门店需要人工协助，已将近期对话记录发送至群内，请及时响应。
             </div>
           </div>
         </div>

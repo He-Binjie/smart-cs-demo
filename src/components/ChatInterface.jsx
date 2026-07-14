@@ -39,7 +39,6 @@ const WELCOME_TEXT = '大家好，我是茶小链，已加入本群。我可以�
 
 export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall, onOpenPrivateChat, onOpenTopic, onRedirectToPrivateChat }, ref) {
   const [showProfileCard, setShowProfileCard] = useState(false);
-  const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, type: 'system', text: '「茶小链」已加入群聊' },
     { id: 2, type: 'bot', user: BOT, cardType: 'welcome', text: WELCOME_TEXT, time: '09:10' },
@@ -308,66 +307,17 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         )}
       </div>
 
-      {/* 底部输入区 + Entry 3 */}
-      <div className="input-area" style={{ position: 'relative' }}>
-        {/* Entry 3: Plus toggle button */}
-        <div
-          onClick={() => setShowPlusMenu(!showPlusMenu)}
-          style={{
-            width: 36, height: 36, borderRadius: '50%',
-            background: showPlusMenu ? '#3370ff' : '#f0f1f3',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', flexShrink: 0,
-            transition: 'all 0.2s',
-            border: showPlusMenu ? '2px solid #3370ff' : '1px solid #e5e6e8',
-          }}
-        >
-          {showPlusMenu ? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="#646a73" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          )}
-        </div>
-
-        {showPlusMenu ? (
-          /* 输入框变为"茶小链"按钮 */
-          <button
-            onClick={() => { setShowPlusMenu(false); onOpenPrivateChat && onOpenPrivateChat(); }}
-            style={{
-              flex: 1, padding: '10px 0',
-              background: 'linear-gradient(135deg, #8B1A1A, #C41E3A)',
-              border: 'none', borderRadius: 20,
-              color: '#fff', fontSize: 14, fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              boxShadow: '0 2px 8px rgba(196,30,58,0.3)',
-              transition: 'all 0.2s',
-            }}
-          >
-            <span style={{ fontSize: 16 }}>🤖</span>
-            茶小链
-          </button>
-        ) : (
-          <>
-            <input
-              type="text"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSend()}
-              placeholder="@茶小链 输入您的问题..."
-              style={{ flex: 1 }}
-            />
-            <button onClick={handleSend} disabled={!input.trim()}>发送</button>
-          </>
-        )}
+      {/* 底部输入区 */}
+      <div className="input-area">
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
+          placeholder="@茶小链 输入您的问题..."
+          style={{ flex: 1 }}
+        />
+        <button onClick={handleSend} disabled={!input.trim()}>发送</button>
       </div>
 
       {/* Entry 1: Profile Card Overlay */}

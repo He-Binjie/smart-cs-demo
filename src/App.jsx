@@ -256,6 +256,7 @@ export default function App() {
   const [containerScale, setContainerScale] = useState(1);
   const [phoneCall, setPhoneCall] = useState(null); // { name, phone }
   const [pendingQuery, setPendingQuery] = useState(null); // { text, scenarioType }
+  const [groupChatContext, setGroupChatContext] = useState(null); // { complaintType } or null for transfer
   const containerRef = useRef(null);
   const chatRef = useRef(null);
   const privateChatRef = useRef(null);
@@ -304,7 +305,7 @@ export default function App() {
   const handleBackFromPrivateChat = () => setView('chat');
   const handleOpenTopic = () => setView('topic');
   const handleBackFromTopic = () => setView('chat');
-  const handleOpenGroupChat = () => setView('groupChat');
+  const handleOpenGroupChat = (complaintType) => { setGroupChatContext(complaintType ? { complaintType } : null); setView('groupChat'); };
   const handleBackFromGroupChat = () => setView('privateChat');
 
   return (
@@ -373,7 +374,7 @@ export default function App() {
               )}
               {view === 'groupChat' && (
                 <div className="page-slide-in h-full">
-                  <GroupChatView onBack={handleBackFromGroupChat} />
+                  <GroupChatView onBack={handleBackFromGroupChat} complaintType={groupChatContext?.complaintType} />
                 </div>
               )}
             </div>

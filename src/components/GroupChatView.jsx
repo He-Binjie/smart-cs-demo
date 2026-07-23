@@ -127,7 +127,7 @@ const DEFAULT_HANDLER = { name: '李BP', role: '供应链BP', color: '#3370ff' }
 // ===== 订单维度转人工 → 处理人映射 =====
 const ORDER_TRANSFER_HANDLER = {
   '仓配': { name: '陈经理', role: '仓配3PL对接人', color: '#F59E0B' },
-  '直配': { name: '艾萍', role: '采购履约人员', color: '#10B981' },
+  '直配': { name: '林芳', role: '采购履约人员', color: '#10B981' },
 };
 
 // ===== 订单信息卡片（订单维度转人工专用） =====

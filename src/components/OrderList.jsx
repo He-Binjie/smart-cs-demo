@@ -13,7 +13,7 @@ const STATUS_COLORS = {
   '待支付': { bg: '#fff1f0', text: '#f5222d' },
 };
 
-export default function OrderList({ onBack, selectedMainOrderId, selectedStoreId: parentStoreId, onCall }) {
+export default function OrderList({ onBack, selectedMainOrderId, selectedStoreId: parentStoreId, onCall, showNewFeature, onTransferToHuman }) {
   const [activeFilter, setActiveFilter] = useState('全部');
   const [expandedProducts, setExpandedProducts] = useState({});
   const [internalStoreId, setInternalStoreId] = useState(null);
@@ -246,6 +246,8 @@ export default function OrderList({ onBack, selectedMainOrderId, selectedStoreId
                   expanded={!!expandedProducts[sub._key]}
                   onToggle={() => toggleExpand(sub._key)}
                   onCall={onCall}
+                  showNewFeature={showNewFeature}
+                  onTransferToHuman={onTransferToHuman}
                 />
               ))}
             </div>
@@ -384,8 +386,9 @@ function SubOrderBlock({ sub, expanded, onToggle }) {
 }
 
 // ===== Sub-order row (no main order header, used inside grouped view) =====
-function SubOrderRow({ sub, expanded, onToggle, onCall }) {
+function SubOrderRow({ sub, expanded, onToggle, onCall, showNewFeature, onTransferToHuman }) {
   const [copied, setCopied] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const products = sub.products || [];
   const productLines = products.map(p => `${p.name}×${p.qty}×${p.unit}`);
   const hasMore = productLines.length > 5;
@@ -606,6 +609,74 @@ function SubOrderRow({ sub, expanded, onToggle, onCall }) {
           </button>
         )}
       </div>
+
+      {/* 新功能：订单维度智能转人工按钮 */}
+      {showNewFeature && (
+        <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            onClick={() => setShowConfirm(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '6px 14px',
+              borderRadius: 6,
+              border: '1px solid #3370ff',
+              background: '#f0f5ff',
+              color: '#3370ff',
+              fontSize: 12,
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#3370ff'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#f0f5ff'; e.currentTarget.style.color = '#3370ff'; }}
+          >
+            👤 转人工
+          </button>
+        </div>
+      )}
+
+      {/* 二次确认弹窗 */}
+      {showConfirm && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999,
+        }} onClick={() => setShowConfirm(false)}>
+          <div style={{
+            background: '#fff', borderRadius: 12, padding: '20px 24px', width: 280,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#1f2329', marginBottom: 8 }}>
+              确认转人工？
+            </div>
+            <div style={{ fontSize: 13, color: '#646a73', lineHeight: 1.6, marginBottom: 16 }}>
+              将为子订单 <span style={{ fontWeight: 500, color: '#1f2329' }}>{sub.subOrderId}</span> 创建专属服务群，自动转接{sub.isDirectDelivery ? '采购履约人员' : '仓配3PL对接人'}。
+            </div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowConfirm(false)}
+                style={{
+                  padding: '6px 16px', borderRadius: 6, border: '1px solid #e5e6e8',
+                  background: '#fff', color: '#646a73', fontSize: 13, cursor: 'pointer',
+                }}
+              >
+                取消
+              </button>
+              <button
+                onClick={() => { setShowConfirm(false); onTransferToHuman?.(sub); }}
+                style={{
+                  padding: '6px 16px', borderRadius: 6, border: 'none',
+                  background: '#3370ff', color: '#fff', fontSize: 13, fontWeight: 500, cursor: 'pointer',
+                }}
+              >
+                确认转人工
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

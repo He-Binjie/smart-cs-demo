@@ -251,12 +251,14 @@ function HomeIndicator() {
 
 export default function App() {
   const [view, setView] = useState('chat');
+  const [showNewFeature, setShowNewFeature] = useState(false); // 订单维度智能转人工 -功能预览
   const [selectedMainOrderId, setSelectedMainOrderId] = useState(null);
   const [selectedStoreId, setSelectedStoreId] = useState(null);
   const [containerScale, setContainerScale] = useState(1);
   const [phoneCall, setPhoneCall] = useState(null); // { name, phone }
   const [pendingQuery, setPendingQuery] = useState(null); // { text, scenarioType }
   const [groupChatContext, setGroupChatContext] = useState(null); // { complaintType } or null for transfer
+  const [orderTransferContext, setOrderTransferContext] = useState(null); // { sub, deliveryType } for order-level transfer
   const containerRef = useRef(null);
   const chatRef = useRef(null);
   const privateChatRef = useRef(null);
@@ -305,8 +307,14 @@ export default function App() {
   const handleBackFromPrivateChat = () => setView('chat');
   const handleOpenTopic = () => setView('topic');
   const handleBackFromTopic = () => setView('chat');
-  const handleOpenGroupChat = (complaintType) => { setGroupChatContext(complaintType ? { complaintType } : null); setView('groupChat'); };
-  const handleBackFromGroupChat = () => setView('privateChat');
+  const handleOpenGroupChat = (complaintType) => { setGroupChatContext(complaintType ? { complaintType } : null); setOrderTransferContext(null); setView('groupChat'); };
+  const handleOrderTransfer = (sub) => {
+    const deliveryType = sub.isDirectDelivery ? '直配' : '仓配';
+    setOrderTransferContext({ sub, deliveryType });
+    setGroupChatContext(null);
+    setView('groupChat');
+  };
+  const handleBackFromGroupChat = () => { setOrderTransferContext(null); setView('orderList'); };
 
   return (
     <div className="h-full w-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
@@ -340,6 +348,54 @@ export default function App() {
           </div>
         </div>
 
+        {/* 新功能预览 Toggle */}
+        <div style={{
+          marginTop: 16,
+          paddingTop: 12,
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', marginBottom: 6 }}>
+            🔮 新功能预览
+          </div>
+          <div style={{ fontSize: 10, color: '#94a3b8', marginBottom: 8, lineHeight: 1.5 }}>
+            订单维度智能转人工
+          </div>
+          <div
+            onClick={() => setShowNewFeature(!showNewFeature)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              cursor: 'pointer',
+              userSelect: 'none',
+            }}
+          >
+            <div style={{
+              width: 36,
+              height: 20,
+              borderRadius: 10,
+              background: showNewFeature ? '#3370ff' : 'rgba(255,255,255,0.15)',
+              position: 'relative',
+              transition: 'background 0.2s',
+            }}>
+              <div style={{
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                background: '#fff',
+                position: 'absolute',
+                top: 2,
+                left: showNewFeature ? 18 : 2,
+                transition: 'left 0.2s',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+              }} />
+            </div>
+            <span style={{ fontSize: 11, color: showNewFeature ? '#93c5fd' : '#64748b' }}>
+              {showNewFeature ? '已开启' : '已关闭'}
+            </span>
+          </div>
+        </div>
+
         {/* Phone */}
         <div className="phone-frame" style={{ width: 390 + 24, height: 844 + 24 }}>
           {/* 侧边按键 */}
@@ -364,7 +420,7 @@ export default function App() {
               )}
               {view === 'orderList' && (
                 <div className="page-slide-in h-full">
-                  <OrderList onBack={handleBack} selectedMainOrderId={selectedMainOrderId} selectedStoreId={selectedStoreId} onCall={handleCall} />
+                  <OrderList onBack={handleBack} selectedMainOrderId={selectedMainOrderId} selectedStoreId={selectedStoreId} onCall={handleCall} showNewFeature={showNewFeature} onTransferToHuman={handleOrderTransfer} />
                 </div>
               )}
               {view === 'topic' && (
@@ -374,7 +430,7 @@ export default function App() {
               )}
               {view === 'groupChat' && (
                 <div className="page-slide-in h-full">
-                  <GroupChatView onBack={handleBackFromGroupChat} complaintType={groupChatContext?.complaintType} />
+                  <GroupChatView key={orderTransferContext ? `ot-${orderTransferContext.deliveryType}-${orderTransferContext.sub.subOrderId}` : `ct-${groupChatContext?.complaintType || 'default'}`} onBack={handleBackFromGroupChat} complaintType={groupChatContext?.complaintType} orderTransfer={orderTransferContext} />
                 </div>
               )}
             </div>
@@ -479,6 +535,72 @@ export default function App() {
                   {s.label}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* 新功能场景按钮 — 非0.5期 */}
+          <div style={{ marginTop: 12, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>
+              🔮 订单维度转人工
+            </div>
+            <div style={{ fontSize: 10, color: '#c084fc', marginBottom: 8, fontWeight: 500 }}>
+              ⚠️ 非0.5期内容
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <button
+                onClick={() => {
+                  setShowNewFeature(true);
+                  setOrderTransferContext({
+                    sub: { subOrderId: 'XSD-20260705-04451-001', status: '已发货', isDirectDelivery: false, products: [{ name: '茉莉雪芽', qty: 5, unit: '箱' }], storeName: '月亮湾店', deliveryMethod: '仓配' },
+                    deliveryType: '仓配',
+                  });
+                  setGroupChatContext(null);
+                  setView('groupChat');
+                }}
+                style={{
+                  padding: '6px 10px',
+                  background: 'rgba(168,85,247,0.12)',
+                  border: '1px solid rgba(168,85,247,0.3)',
+                  borderRadius: 6,
+                  color: '#c084fc',
+                  fontSize: 11,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(168,85,247,0.25)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(168,85,247,0.12)'; }}
+              >
+                📦 仓配订单 → 转3PL
+              </button>
+              <button
+                onClick={() => {
+                  setShowNewFeature(true);
+                  setOrderTransferContext({
+                    sub: { subOrderId: 'XSD-20260630-03293-001', status: '备货中', isDirectDelivery: true, products: [{ name: '定制杯材', qty: 200, unit: '个' }], storeName: '金茂大厦店', deliveryMethod: '直配' },
+                    deliveryType: '直配',
+                  });
+                  setGroupChatContext(null);
+                  setView('groupChat');
+                }}
+                style={{
+                  padding: '6px 10px',
+                  background: 'rgba(168,85,247,0.12)',
+                  border: '1px solid rgba(168,85,247,0.3)',
+                  borderRadius: 6,
+                  color: '#c084fc',
+                  fontSize: 11,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(168,85,247,0.25)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(168,85,247,0.12)'; }}
+              >
+                🚚 直配订单 → 转采购履约
+              </button>
             </div>
           </div>
         </div>

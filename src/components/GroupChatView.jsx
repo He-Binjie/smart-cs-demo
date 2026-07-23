@@ -124,8 +124,69 @@ const HANDLER_MAP = {
 };
 const DEFAULT_HANDLER = { name: '李BP', role: '供应链BP', color: '#3370ff' };
 
-export default function GroupChatView({ onBack, complaintType }) {
-  const handler = (complaintType && HANDLER_MAP[complaintType]) || DEFAULT_HANDLER;
+// ===== 订单维度转人工 → 处理人映射 =====
+const ORDER_TRANSFER_HANDLER = {
+  '仓配': { name: '陈经理', role: '仓配3PL对接人', color: '#F59E0B' },
+  '直配': { name: '艾萍', role: '采购履约人员', color: '#10B981' },
+};
+
+// ===== 订单信息卡片（订单维度转人工专用） =====
+function OrderInfoCard({ sub, deliveryType }) {
+  const products = sub.products || [];
+  const productText = products.map(p => `${p.name}×${p.qty}${p.unit}`).join('、');
+  return (
+    <div style={{
+      background: '#f0f5ff',
+      borderRadius: 10,
+      padding: '12px 14px',
+      marginBottom: 16,
+      border: '1px solid #d6e4ff',
+    }}>
+      <div style={{ fontSize: 12, fontWeight: 600, color: '#3370ff', marginBottom: 10 }}>
+        📋 订单信息
+      </div>
+      <div style={{ fontSize: 12, lineHeight: '20px', color: '#1f2329' }}>
+        <div style={{ marginBottom: 4 }}>
+          <span style={{ color: '#8f959e' }}>子订单号：</span>
+          <span style={{ fontWeight: 500 }}>{sub.subOrderId}</span>
+        </div>
+        <div style={{ marginBottom: 4 }}>
+          <span style={{ color: '#8f959e' }}>配送方式：</span>
+          <span style={{
+            display: 'inline-block',
+            padding: '1px 6px',
+            borderRadius: 4,
+            fontSize: 11,
+            fontWeight: 500,
+            background: deliveryType === '直配' ? '#fff7e6' : '#f6ffed',
+            color: deliveryType === '直配' ? '#d48806' : '#389e0d',
+            border: `1px solid ${deliveryType === '直配' ? '#ffd591' : '#b7eb8f'}`,
+          }}>{deliveryType}</span>
+        </div>
+        <div style={{ marginBottom: 4 }}>
+          <span style={{ color: '#8f959e' }}>订单状态：</span>
+          <span style={{ fontWeight: 500 }}>{sub.status}</span>
+        </div>
+        <div style={{ marginBottom: 4 }}>
+          <span style={{ color: '#8f959e' }}>商品信息：</span>
+          <span>{productText || '—'}</span>
+        </div>
+        {sub.storeName && (
+          <div>
+            <span style={{ color: '#8f959e' }}>所属门店：</span>
+            <span style={{ fontWeight: 500 }}>{sub.storeName}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function GroupChatView({ onBack, complaintType, orderTransfer }) {
+  const isOrderTransfer = !!orderTransfer;
+  const handler = isOrderTransfer
+    ? (ORDER_TRANSFER_HANDLER[orderTransfer.deliveryType] || DEFAULT_HANDLER)
+    : ((complaintType && HANDLER_MAP[complaintType]) || DEFAULT_HANDLER);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef(null);
@@ -209,7 +270,7 @@ export default function GroupChatView({ onBack, complaintType }) {
         {/* 成员加入提示 */}
         <GroupMessage isSystem text={`张店长、${handler.name}（${handler.role}）、茶小链 已加入群聊`} />
 
-        {/* 茶小链发送历史对话 */}
+        {/* 茶小链发送消息 */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
           <div style={{ flexShrink: 0 }}>
             <BotAvatar size={28} />
@@ -229,13 +290,20 @@ export default function GroupChatView({ onBack, complaintType }) {
               border: '1px solid #d6e4ff',
               marginBottom: 8,
             }}>
-              <span style={{ color: '#3370ff', fontWeight: 500 }}>@{handler.name}</span> 门店需要人工协助，已将近期对话记录发送至群内，请及时响应。
+              <span style={{ color: '#3370ff', fontWeight: 500 }}>@{handler.name}</span>{' '}
+              {isOrderTransfer
+                ? `门店咨询${orderTransfer.deliveryType}订单问题，已将订单信息发送至群内，请及时响应。`
+                : '门店需要人工协助，已将近期对话记录发送至群内，请及时响应。'}
             </div>
           </div>
         </div>
 
-        {/* 历史对话摘要 */}
-        <HistorySummaryCard />
+        {/* 订单信息卡片 or 历史对话摘要 */}
+        {isOrderTransfer ? (
+          <OrderInfoCard sub={orderTransfer.sub} deliveryType={orderTransfer.deliveryType} />
+        ) : (
+          <HistorySummaryCard />
+        )}
 
         {/* 后续对话 */}
         {messages.map(msg => (

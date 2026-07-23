@@ -9,7 +9,7 @@ export default function FeishuCard({ onCardClick }) {
         <svg viewBox="0 0 32 32" width="32" height="32"><defs><linearGradient id="fcbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#8B1A1A"/><stop offset="100%" stopColor="#C41E3A"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#fcbg)"/><ellipse cx="16" cy="14" rx="6.5" ry="6" fill="#FFF8E7"/><circle cx="13.8" cy="13" r="1" fill="#5C3317"/><circle cx="18.2" cy="13" r="1" fill="#5C3317"/><path d="M13.5 16 Q16 18.5 18.5 16" stroke="#5C3317" strokeWidth="0.8" fill="none" strokeLinecap="round"/><path d="M16 5 Q18 7 17 9.5 Q16 8 15 9.5 Q14 7 16 5Z" fill="#4CAF50"/><circle cx="11" cy="14.5" r="1.5" fill="#FFB6C1" opacity="0.5"/><circle cx="21" cy="14.5" r="1.5" fill="#FFB6C1" opacity="0.5"/></svg>
       </div>
       <div className="flex-1 max-w-[82%]">
-        <div className="text-[11px] text-gray-400 mb-1">茶小链</div>
+        <div className="text-[11px] text-gray-400 mb-1">链小助</div>
         <div
           className="feishu-card bg-white rounded-xl overflow-hidden shadow-sm cursor-pointer"
           onClick={onCardClick}

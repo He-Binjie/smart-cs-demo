@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-// ===== 茶小链 Bot Avatar =====
+// ===== 链小助 Bot Avatar =====
 function BotAvatar({ size = 32 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -103,7 +103,7 @@ function HistorySummaryCard() {
             <span style={{ color: '#1f2329' }}>{r.user}</span>
           </div>
           <div style={{ fontSize: 12, lineHeight: '18px' }}>
-            <span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>
+            <span style={{ color: '#C41E3A', fontWeight: 500 }}>链小助：</span>
             <span style={{ color: '#1f2329' }}>{r.bot}</span>
           </div>
         </div>
@@ -174,7 +174,7 @@ export default function TopicView({ onBack }) {
             <h1 style={{ fontSize: 15, fontWeight: 600, color: '#1f2329', margin: 0 }}>话题：【转人工】</h1>
           </div>
           <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2 }}>
-            参与人：张店长、李BP、茶小链
+            参与人：张店长、李BP、链小助
           </div>
         </div>
       </div>
@@ -184,14 +184,14 @@ export default function TopicView({ onBack }) {
         textAlign: 'center', padding: '10px 0 4px',
         fontSize: 11, color: '#8f959e',
       }}>
-        —— 由茶小链自动创建 ——
+        —— 由链小助自动创建 ——
       </div>
 
       {/* 话题消息区 */}
       <div ref={scrollRef} style={{
         flex: 1, overflowY: 'auto', padding: '8px 16px 16px',
       }}>
-        {/* 系统消息：茶小链创建话题并@BP */}
+        {/* 系统消息：链小助创建话题并@BP */}
         <div style={{
           display: 'flex', gap: 8, marginBottom: 16,
         }}>
@@ -200,7 +200,7 @@ export default function TopicView({ onBack }) {
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 3 }}>
-              <span style={{ fontSize: 13, fontWeight: 500, color: '#1f2329' }}>茶小链</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#1f2329' }}>链小助</span>
               <span style={{ fontSize: 11, color: '#8f959e' }}>{getTime()}</span>
             </div>
             <div style={{

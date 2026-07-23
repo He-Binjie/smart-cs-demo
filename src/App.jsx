@@ -466,7 +466,7 @@ export default function App() {
               右侧场景按钮<span style={{ color: '#fbbf24', fontWeight: 500 }}>仅用于演示</span>，实际产品中不存在。
             </div>
             <div style={{ marginBottom: 10 }}>
-              实际交互：飞书群中 <span style={{ color: '#60a5fa' }}>@茶小链</span> → 引导去私聊 → 私聊中查看回复。
+              实际交互：飞书群中 <span style={{ color: '#60a5fa' }}>@链小助</span> → 引导去私聊 → 私聊中查看回复。
             </div>
           </div>
 

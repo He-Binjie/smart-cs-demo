@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-// ===== 茶小链 Bot Avatar =====
+// ===== 链小助 Bot Avatar =====
 function BotAvatar({ size = 32 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -106,7 +106,7 @@ function HistorySummaryCard() {
             <span style={{ color: '#1f2329' }}>{r.user}</span>
           </div>
           <div style={{ fontSize: 12, lineHeight: '18px' }}>
-            <span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>
+            <span style={{ color: '#C41E3A', fontWeight: 500 }}>链小助：</span>
             <span style={{ color: '#1f2329' }}>{r.bot}</span>
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function GroupChatView({ onBack, complaintType, orderTransfer }) 
         </div>
         <div style={{ flex: 1 }}>
           <h1 style={{ fontSize: 15, fontWeight: 600, color: '#1f2329', margin: 0 }}>
-            张店长-{handler.name}-茶小链
+            张店长-{handler.name}-链小助
           </h1>
           <div style={{ fontSize: 11, color: '#8f959e', marginTop: 2 }}>
             3人 · 专属服务群
@@ -265,19 +265,19 @@ export default function GroupChatView({ onBack, complaintType, orderTransfer }) 
         flex: 1, overflowY: 'auto', padding: '8px 16px 16px',
       }}>
         {/* 系统消息 */}
-        <GroupMessage isSystem text="「茶小链」已创建专属服务群" />
+        <GroupMessage isSystem text="「链小助」已创建专属服务群" />
 
         {/* 成员加入提示 */}
-        <GroupMessage isSystem text={`张店长、${handler.name}（${handler.role}）、茶小链 已加入群聊`} />
+        <GroupMessage isSystem text={`张店长、${handler.name}（${handler.role}）、链小助 已加入群聊`} />
 
-        {/* 茶小链发送消息 */}
+        {/* 链小助发送消息 */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
           <div style={{ flexShrink: 0 }}>
             <BotAvatar size={28} />
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 3 }}>
-              <span style={{ fontSize: 13, fontWeight: 500, color: '#1f2329' }}>茶小链</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#1f2329' }}>链小助</span>
               <span style={{ fontSize: 11, color: '#8f959e' }}>{getTime()}</span>
             </div>
             <div style={{
@@ -290,10 +290,11 @@ export default function GroupChatView({ onBack, complaintType, orderTransfer }) 
               border: '1px solid #d6e4ff',
               marginBottom: 8,
             }}>
-              <span style={{ color: '#3370ff', fontWeight: 500 }}>@{handler.name}</span>{' '}
-              {isOrderTransfer
-                ? `门店咨询${orderTransfer.deliveryType}订单问题，已将订单信息发送至群内，请及时响应。`
-                : '门店需要人工协助，已将近期对话记录发送至群内，请及时响应。'}
+              {isOrderTransfer ? (
+                <>门店咨询{orderTransfer.deliveryType}订单问题，已将订单信息发送至群内，请及时响应。</>
+              ) : (
+                <><span style={{ color: '#3370ff', fontWeight: 500 }}>@{handler.name}</span> 门店需要人工协助，已将近期对话记录发送至群内，请及时响应。</>
+              )}
             </div>
           </div>
         </div>

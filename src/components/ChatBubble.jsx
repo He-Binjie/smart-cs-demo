@@ -57,9 +57,9 @@ export default function ChatBubble({ msg, onViewOrderList, onViewMainOrder, onCa
         {msg.text && !msg.cardType && (
           <div className="bubble">
             <p className="whitespace-pre-wrap">
-              {isUser && msg.text.startsWith('@茶小链') ? (
+              {isUser && msg.text.startsWith('@链小助') ? (
                 <>
-                  <span className="at-mention">@茶小链</span>
+                  <span className="at-mention">@链小助</span>
                   {msg.text.slice(4)}
                 </>
               ) : msg.text}
@@ -344,7 +344,7 @@ function TransferWithHistoryCard() {
           <div key={i} style={{ marginBottom: i < historyRounds.length - 1 ? 10 : 0 }}>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第{r.round}轮】</div>
             <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>{r.user}</div>
-            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>{r.bot}</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>链小助：</span>{r.bot}</div>
           </div>
         ))}
       </div>
@@ -378,7 +378,7 @@ function TransferThreadCard() {
           已 <span className="at-mention" style={{ fontSize: 12 }}>@李BP</span> 并带入近期对话记录，请在话题中继续沟通。
         </div>
         <div style={{ fontSize: 11, color: '#8f959e', marginBottom: 4 }}>
-          参与人：张店长、李BP、茶小链
+          参与人：张店长、李BP、链小助
         </div>
         <button
           onClick={() => setExpanded(!expanded)}
@@ -398,7 +398,7 @@ function TransferThreadCard() {
               <div key={i} style={{ marginBottom: i < historyRounds.length - 1 ? 8 : 0 }}>
                 <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第{r.round}轮】</div>
                 <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>{r.user}</div>
-                <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>{r.bot}</div>
+                <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>链小助：</span>{r.bot}</div>
               </div>
             ))}
           </div>
@@ -421,10 +421,10 @@ function TransferGroupCard() {
           background: '#f0f5ff', borderRadius: 6, padding: '8px 10px',
           marginBottom: 8, fontSize: 13, color: '#3370ff', fontWeight: 500,
         }}>
-          群名：张店长-李BP-茶小链
+          群名：张店长-李BP-链小助
         </div>
         <div style={{ fontSize: 12, color: '#646a73', marginBottom: 6 }}>
-          群成员：张店长、李BP、茶小链
+          群成员：张店长、李BP、链小助
         </div>
         <div style={{ fontSize: 12, color: '#646a73', marginBottom: 8 }}>
           已将近期对话记录发送至群内，<span className="at-mention" style={{ fontSize: 12 }}>@李BP</span> 将尽快回复您。
@@ -436,17 +436,17 @@ function TransferGroupCard() {
           <div style={{ marginBottom: 6 }}>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第1轮】</div>
             <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>今天月亮湾店鲜奶到了吗？</div>
-            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>已为您查询，鲜奶订单状态为"已发货"，预计今天下午到达。</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>链小助：</span>已为您查询，鲜奶订单状态为"已发货"，预计今天下午到达。</div>
           </div>
           <div style={{ marginBottom: 6 }}>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第2轮】</div>
             <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>司机电话多少？</div>
-            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>配送司机王师傅，电话 138****5678。</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>链小助：</span>配送司机王师傅，电话 138****5678。</div>
           </div>
           <div>
             <div style={{ color: '#8f959e', fontSize: 11, marginBottom: 2 }}>【第3轮】</div>
             <div><span style={{ color: '#8B5CF6', fontWeight: 500 }}>店长：</span>我好像下错单了，能帮我处理一下吗</div>
-            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>茶小链：</span>实在抱歉，我们紧急处理，正在为您转接对应BP人工服务</div>
+            <div><span style={{ color: '#C41E3A', fontWeight: 500 }}>链小助：</span>实在抱歉，我们紧急处理，正在为您转接对应BP人工服务</div>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import ChatBubble from './ChatBubble';
 import { matchFAQ, logisticsData, humanAgents, faqData } from '../data/mockFAQ';
 import { mockStores } from '../data/mockOrders';
 
-// ===== 茶小链 Bot Avatar (霸王茶姬 brand style) =====
+// ===== 链小助 Bot Avatar (霸王茶姬 brand style) =====
 function BotAvatar() {
   return (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,17 +30,17 @@ function BotAvatar() {
 }
 
 // ===== Identity constants =====
-const BOT = { name: '茶小链', avatar: 'bot', color: '#C41E3A' };
+const BOT = { name: '链小助', avatar: 'bot', color: '#C41E3A' };
 const USER = { name: '张店长（月亮湾店）', avatar: '张', color: '#8B5CF6' };
 const OTHER = { name: '李BP', avatar: '李', color: '#10B981' };
 
 // ===== Welcome message text =====
-const WELCOME_TEXT = '大家好，我是茶小链，已加入本群。我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n有任何问题随时 @我 即可。';
+const WELCOME_TEXT = '大家好，我是链小助，已加入本群。我可以帮您：\n📦 查询物流配送信息\n📋 查询订单状态\n❓ 解答供应链常见问题\n👤 转接人工客服\n🎫 提交工单\n\n有任何问题随时 @我 即可。';
 
 export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOrder, onCall, onOpenPrivateChat, onOpenTopic, onRedirectToPrivateChat }, ref) {
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, type: 'system', text: '「茶小链」已加入群聊' },
+    { id: 1, type: 'system', text: '「链小助」已加入群聊' },
     { id: 2, type: 'bot', user: BOT, cardType: 'welcome', text: WELCOME_TEXT, time: '09:10' },
     { id: 3, type: 'other', user: { name: '王承运商', avatar: '王', color: '#F59E0B' }, text: '今天月亮湾店的货已经装车了，预计下午2点到', time: '09:12' },
     { id: 4, type: 'user', user: USER, text: '好的，收到', time: '09:15' },
@@ -100,13 +100,13 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
   const handleSend = () => {
     const text = input.trim();
     if (!text) return;
-    addMessage({ type: 'user', user: USER, text: `@茶小链 ${text}`, time: getTime() });
+    addMessage({ type: 'user', user: USER, text: `@链小助 ${text}`, time: getTime() });
     setInput('');
     simulateBotReply(text);
   };
 
   const handleScenario = (scenario) => {
-    addMessage({ type: 'user', user: USER, text: `@茶小链 ${scenario.text}`, time: getTime() });
+    addMessage({ type: 'user', user: USER, text: `@链小助 ${scenario.text}`, time: getTime() });
     simulateBotReply(scenario.text, scenario.scenario);
   };
 
@@ -131,7 +131,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
 
   // ===== Entry 2: Tab click =====
   const handleTabClick = (tab) => {
-    if (tab === '茶小链') {
+    if (tab === '链小助') {
       onOpenPrivateChat && onOpenPrivateChat();
     }
   };
@@ -149,7 +149,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
       return (
         <div key={msg.id} className="message-row bot animate-slideUp">
           {/* Entry 1: clickable avatar */}
-          <div className="avatar bot" onClick={handleBotAvatarClick} style={{ cursor: 'pointer' }} title="点击查看茶小链资料">
+          <div className="avatar bot" onClick={handleBotAvatarClick} style={{ cursor: 'pointer' }} title="点击查看链小助资料">
             <BotAvatar />
           </div>
           <div className="message-content">
@@ -235,7 +235,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
     );
   };
 
-  const GROUP_TABS = ['消息', '云文档', '文件', '日历', '茶小链'];
+  const GROUP_TABS = ['消息', '云文档', '文件', '日历', '链小助'];
 
   return (
     <div className="h-full flex flex-col" style={{ background: '#f5f6f7', position: 'relative' }}>
@@ -261,7 +261,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
         overflowX: 'auto',
       }}>
         {GROUP_TABS.map(tab => {
-          const isBot = tab === '茶小链';
+          const isBot = tab === '链小助';
           const isActive = tab === '消息';
           return (
             <div
@@ -314,7 +314,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSend()}
-          placeholder="@茶小链 输入您的问题..."
+          placeholder="@链小助 输入您的问题..."
           style={{ flex: 1 }}
         />
         <button onClick={handleSend} disabled={!input.trim()}>发送</button>
@@ -354,7 +354,7 @@ export default forwardRef(function ChatInterface({ onViewOrderList, onViewMainOr
                 }}>
                   <BotAvatar size={48} />
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>茶小链</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>链小助</div>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>
                   供应链智能客服机器人
                 </div>

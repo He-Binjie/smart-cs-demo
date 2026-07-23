@@ -18,7 +18,7 @@ export const DEMO_SCENARIOS = [
   { label: '🎫 转工单', text: '帮我提交工单' },
 ];
 
-// ===== 茶小链 Bot Avatar =====
+// ===== 链小助 Bot Avatar =====
 function BotAvatar({ size = 32 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +44,7 @@ function BotAvatar({ size = 32 }) {
   );
 }
 
-const BOT = { name: '茶小链', avatar: 'bot', color: '#C41E3A' };
+const BOT = { name: '链小助', avatar: 'bot', color: '#C41E3A' };
 const USER = { name: '张店长（月亮湾店）', avatar: '张', color: '#8B5CF6' };
 
 // 私聊无欢迎语，用户直接可用
@@ -200,7 +200,7 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
         const greetings = [
           '你好呀！很高兴见到你 😊',
           '嗨～有什么可以帮你的吗？😊',
-          '你好！茶小链随时为你服务 🍵',
+          '你好！链小助随时为你服务 🍵',
         ];
         const greeting = greetings[Math.floor(Math.random() * greetings.length)];
         addMessage({
@@ -338,7 +338,7 @@ export default forwardRef(function PrivateChat({ onBack, onViewOrderList, onView
           <BotAvatar />
         </div>
         <div className="header-info" style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 16 }}>茶小链</h1>
+          <h1 style={{ fontSize: 16 }}>链小助</h1>
           <p style={{ fontSize: 11, color: '#8f959e' }}>供应链智能客服 · 在线</p>
         </div>
       </div>
